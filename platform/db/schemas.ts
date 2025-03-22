@@ -12,4 +12,5 @@ export const Team = mongoose.model("Team", new Schema({
     id: ObjectId,
     leader: ObjectId,
     members: [ObjectId],
+    name: String
 }))
