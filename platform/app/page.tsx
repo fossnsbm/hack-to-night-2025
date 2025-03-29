@@ -1,5 +1,3 @@
-import { db } from "../db/utils"
-
 export default function Home() {
     return (
         <div>
