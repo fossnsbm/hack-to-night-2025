@@ -20,8 +20,6 @@ const no_of_stars = /Mobi/i.test(navigator.userAgent) ? 50 : 200;
 const stars: Star[] = [];
 
 var last_timestamp = 0;
-var mouse_x = 0;
-var mouse_y = 0;
 var scroll_y = 0;
 
 function render(timestamp: DOMHighResTimeStamp) {
@@ -107,11 +105,6 @@ function BackgroundCanvas() {
             const delta = last_scroll_y - page.scrollTop;
             last_scroll_y = page.scrollTop;
             scroll_y += (delta / canvas.height);
-        });
-
-        page.addEventListener("mousemove", (ev) => {
-            mouse_x = ev.offsetX;
-            mouse_y = ev.offsetY;
         });
 
         requestAnimationFrame(render);
