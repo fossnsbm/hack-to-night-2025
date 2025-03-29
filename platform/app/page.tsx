@@ -10,11 +10,11 @@ export default function Home() {
             <Header />
             <div id="hero" className="snap-start h-screen pt-[50px]">Hero</div>
             <div id="about" className="snap-start h-screen pt-[50px]">About</div>
-            <div id="photos" className="snap-start h-screen pt-[50px]">Photos</div>
+            <div id="photos" className="snap-start h-screen pt-[50px]"> <Memory/></div>
             <div id="timeline" className="snap-start h-screen pt-[50px]">Timeline</div>
             <div id="register" className="snap-start h-screen pt-[50px]">Register</div>
             <div id="faq" className="snap-start h-screen pt-[50px]">Faq</div>
-            <Memory/>
+
             <Footer/>
         </div>
         </>
