@@ -5,6 +5,13 @@ import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import BackgroundCanvas from "@/components/BackgroundCanvas";
 
+
+const silkscreen = Silkscreen({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-krona-one",
+});
+
 const silkscreen = Silkscreen({
   subsets: ["latin"],
   weight: "400",
