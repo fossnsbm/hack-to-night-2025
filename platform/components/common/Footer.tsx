@@ -1,23 +1,16 @@
-import { Silkscreen } from 'next/font/google';
 import { BsInstagram, BsTwitter } from 'react-icons/bs';
 import { FaFacebook, FaLinkedinIn, FaMedium, FaYoutube } from 'react-icons/fa';
-
-const silkscreen = Silkscreen({
-	subsets: [ 'latin' ],
-	weight: '400',
-	variable: '--font-ubuntu'
-});
 
 function Footer() {
 	return (
 		<div className="snap-end">
 			<footer className="bg-gray-900 text-white px-4 sm:px-8 md:px-16 lg:px-28 py-6 sm:py-8">
-				<div className={`text-[32px] sm:text-[40px] text-center ${silkscreen.className} pb-4 sm:pb-10`}>
+				<div className={`text-[32px] sm:text-[40px] text-center pb-4 sm:pb-10`}>
 					<h1>HackToNight 2.0</h1>
 				</div>
 
 				<div
-					className={`grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 text-center ${silkscreen.className} sm:text-left`}
+					className={`grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 text-center sm:text-left`}
 				>
 					<div className="space-y-2 sm:space-y-4 mb-4 sm:mb-0">
 						<h2 className="text-[15px] sm:text-[20px] font-bold">
@@ -34,7 +27,7 @@ function Footer() {
 					</div>
 				</div>
 
-				<div className={`border-t border-gray-700 mt-6 sm:mt-8 pt-6  ${silkscreen.className}`}>
+				<div className={`border-t border-gray-700 mt-6 sm:mt-8 pt-6`}>
 					<div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-4">
 						<div className="text-[#8CB6EA] text-center sm:text-left">
 							<p className="text-[15px]">
