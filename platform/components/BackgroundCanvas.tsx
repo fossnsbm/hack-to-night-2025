@@ -5,8 +5,8 @@ import { useEffect } from "react";
 const is_mobile = "navigator" in globalThis ? /Mobi/i.test(navigator.userAgent) : false;
 
 const STAR_SIZE = 1;
-const STAR_FLOAT_SPEED = 5;
-const STAR_NUM = is_mobile ? 50 : 200;
+const STAR_FLOAT_SPEED = 8;
+const STAR_NUM = 200;
 const STAR_SHINE_DUR = 10000;
 
 const MOON_SIZE = is_mobile ? 0.80 : 0.40;

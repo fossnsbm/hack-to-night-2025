@@ -1,16 +1,15 @@
-import BackgroundCanvas from "@/components/BackgroundCanvas";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Silkscreen } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import { Silkscreen } from "next/font/google";
+import Header from "@/components/common/Header";
+import Footer from "@/components/common/Footer";
+import BackgroundCanvas from "@/components/BackgroundCanvas";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const silkscreen = Silkscreen({
   subsets: ["latin"],
+  weight: "400",
+  variable: "--font-krona-one",
 });
 
 const silkscreen = Silkscreen({
@@ -32,11 +31,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${silkscreen.className} antialiased`}
+        className={`${silkscreen.className} antialiased`}
       >
         <BackgroundCanvas />
         <main className="fixed top-0 left-0 w-screen h-screen z-10 flex flex-col">
-          {children}
+            <div id="page" className="snap-y snap-mandatory overflow-y-auto font-sans">
+                <Header />
+                {children}
+                <Footer />
+            </div>
         </main>
       </body>
     </html>
