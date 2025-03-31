@@ -1,58 +1,86 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+
+const is_mobile = "navigator" in globalThis ? /Mobi/i.test(navigator.userAgent) : false;
+
+const STAR_SIZE = 1;
+const STAR_FLOAT_SPEED = 5;
+const STAR_NUM = is_mobile ? 50 : 200;
+const STAR_SHINE_DUR = 10000;
+
+const MOON_SIZE = is_mobile ? 0.80 : 0.40;
+
+const ASTRO_WIDTH = is_mobile ? 0.30 : 0.10;
+const ASTRO_FLOAT_SPEED = 5;
+
+type Vec2 = {
+    x: number,
+    y: number
+}
 
 type Star = {
-    x: number,
-    y: number,
+    pos: Vec2,
     last_shined: number,
     shining_time: number,
     shining_factor: number,
     float_speed_factor: number
 }
 
-const imageMap = new Map<string, HTMLImageElement>();
-const is_mobile = "navigator" in globalThis ? /Mobi/i.test(navigator.userAgent) : false;
+type Stars = {
+    scroll_amount: number,
+    stars: Star[]
+}
 
+type Moon = {
+    pos: Vec2,
+    offset: Vec2,
+}
+
+type Astronaut = {
+    pos: Vec2
+    float_dir: Vec2
+    float_offset: Vec2,
+    scroll_offset: Vec2
+    offset: Vec2,
+}
+
+var page: HTMLDivElement;
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
-var page: HTMLDivElement;
 
 var last_timestamp = 0;
 var last_scroll_y = 0;
 
-const star_shine_time = 10000;
-const star_float_speed = 5;
-const no_of_stars = is_mobile ? 50 : 200;
-const stars: Star[] = [];
+const imageMap = new Map<string, HTMLImageElement>();
 
-var star_scroll_amount = 0;
+const stars: Stars = {
+    stars: [],
+    scroll_amount: 0
+}
 
-const astro_float_speed = 5;
-const astro_w = is_mobile ? 0.30 : 0.10;
-const moon_size = is_mobile ? 0.80 : 0.40;
+const moon: Moon = {
+    pos: { x: 0, y: 0 },
+    offset: { x: 0, y: 0 }
+}
 
-var moon_offset_x = 0, moon_offset_y = 0;
+const astro: Astronaut = {
+    pos: { x: 0, y: 0 },
+    float_dir: { x: 0, y: 0 },
+    float_offset: { x: 0, y: 0 },
+    scroll_offset: { x: 0, y: 0 },
+    offset: { x: 0, y: 0 }
+}
 
-var astro_offset_float_x = 0, astro_offset_float_y = 0;
-var astro_offset_scroll_x = 0, astro_offset_scroll_y = 0;
-var astro_offset_x = 0, astro_offset_y = 0;
-var astro_float_x = 1, astro_float_y = 1;
-
-function render(timestamp: DOMHighResTimeStamp) {
-    // Update
-
-    const delta = (timestamp - last_timestamp) / 1000;
-    last_timestamp = timestamp;
-
+function update(delta: number, timestamp: number) {
     const scroll_y_delta = page.scrollTop - last_scroll_y;
     last_scroll_y = page.scrollTop;
 
-    // Update stars
+    // Stars
 
-    star_scroll_amount -= (scroll_y_delta / canvas.height) * 0.2;
+    stars.scroll_amount -= (scroll_y_delta / canvas.height) * 0.2;
 
-    for (const star of stars) {
+    for (const star of stars.stars) {
         if (timestamp - star.last_shined > star.shining_time) {
             star.last_shined = timestamp;
         }
@@ -60,165 +88,182 @@ function render(timestamp: DOMHighResTimeStamp) {
         const shining_elapsed = (timestamp - star.last_shined) / star.shining_time;
         star.shining_factor = (Math.sin(shining_elapsed * 2 * Math.PI) + 1) / 2;
 
-        star.x -= (star.float_speed_factor / canvas.width) * delta;
-        star.y -= (star.float_speed_factor / canvas.width) * delta;
+        star.pos.x -= (star.float_speed_factor / canvas.width) * delta;
+        star.pos.y -= (star.float_speed_factor / canvas.height) * delta;
 
-        star.y += star_scroll_amount * delta;
+        star.pos.y += stars.scroll_amount * delta;
 
-        if (star.x < 0) {
-            star.x += 1;
-        } else if (star.x > 1) {
-            star.x -= 1;
+        if (star.pos.x < 0) {
+            star.pos.x += 1;
+        } else if (star.pos.x > 1) {
+            star.pos.x -= 1;
         }
 
-        if (star.y < 0) {
-            star.y += 1;
-        } else if (star.y > 1) {
-            star.y -= 1;
+        if (star.pos.y < 0) {
+            star.pos.y += 1;
+        } else if (star.pos.y > 1) {
+            star.pos.y -= 1;
         }
     }
 
-    star_scroll_amount -= star_scroll_amount * delta;
-
-    // Update images
+    stars.scroll_amount -= stars.scroll_amount * delta;
 
     // Moon
 
-    const _moon_x = (1 - (moon_size * 2/3));
-    const _moon_y = (1 - ((moon_size * (canvas.width / canvas.height)) * 2/3));
+    const moon_pos: Vec2 = {
+        x: (1 - (MOON_SIZE * 2/3)),
+        y: (1 - ((MOON_SIZE * (canvas.width / canvas.height)) * 2/3))
+    };
     
-    const moon_scroll_goal_x = 1 + moon_size;
-    const moon_scroll_goal_y = 2 + moon_size;
+    const moon_scroll_goal: Vec2 = {
+        x: 1 + MOON_SIZE,
+        y: 2 + MOON_SIZE
+    };
 
-    moon_offset_x = (moon_scroll_goal_x - _moon_x) * (page.scrollTop / page.clientHeight);
-    moon_offset_x = (moon_scroll_goal_y - _moon_y) * (page.scrollTop / page.clientHeight);
+    moon.offset.x = (moon_scroll_goal.x - moon_pos.x) * (page.scrollTop / page.clientHeight);
+    moon.offset.y = (moon_scroll_goal.y - moon_pos.y) * (page.scrollTop / page.clientHeight);
     
-    const moon_x = _moon_x + moon_offset_x;
-    const moon_y = _moon_y + moon_offset_y;
+    moon.pos.x = moon_pos.x + moon.offset.x;
+    moon.pos.y = moon_pos.y + moon.offset.y;
     
-    // Astro
-    const [_astro_w, _astro_h] = imgDims("astronaut.png");
-    const astro_h = ((astro_w * canvas.width) / (_astro_w / _astro_h)) / canvas.height;
+    // Astronaut
+    const astro_src_dims = imgDims("astronaut.png");
+    const astro_dims: Vec2 = {
+        x: ASTRO_WIDTH,
+        y: ((ASTRO_WIDTH * canvas.width) / (astro_src_dims.x / astro_src_dims.y)) / canvas.height
+    };
 
-    const _astro_x = (1 - (1 - moon_x) - (astro_w * 2/3));
-    const _astro_y = (1 - (1 - moon_y) - (astro_h * 2/3));
+    const astro_pos: Vec2 = {
+        x: (1 - (1 - moon.pos.x) - (astro_dims.x * 2/3)),
+        y: (1 - (1 - moon.pos.y) - (astro_dims.y * 2/3))
+    };
 
     if (Math.random() < 0.001) {
-        astro_float_x *= -1
+        astro.float_dir.x *= -1
     }
 
     if (Math.random() < 0.001) {
-        astro_float_y *= -1
+        astro.float_dir.y *= -1
     }
     
-    astro_offset_float_x += astro_float_x * astro_float_speed * delta * 0.0005;
-    astro_offset_float_y += astro_float_y * astro_float_speed * delta * 0.0005;
+    astro.float_offset.x += astro.float_dir.x * ASTRO_FLOAT_SPEED * delta * 0.0005;
+    astro.float_offset.y += astro.float_dir.y * ASTRO_FLOAT_SPEED * delta * 0.0005;
 
-    astro_offset_float_x = Math.max(Math.min(astro_offset_float_x, 0.05), -0.05);
-    astro_offset_float_y = Math.max(Math.min(astro_offset_float_y, 0.05), -0.05);
+    astro.float_offset.x = Math.max(Math.min(astro.float_offset.x, 0.05), -0.05);
+    astro.float_offset.y = Math.max(Math.min(astro.float_offset.y, 0.05), -0.05);
 
-    const astro_scroll_goal_x = 1 + astro_w;
+    const astro_scroll_goal_x = 1 + astro_dims.x;
     const astro_scroll_goal_y = 0;
 
-    astro_offset_scroll_x = (astro_scroll_goal_x - _astro_x) * (page.scrollTop / page.clientHeight);
-    astro_offset_scroll_y = (astro_scroll_goal_y - _astro_y) * (page.scrollTop / page.clientHeight);
+    astro.scroll_offset.x = (astro_scroll_goal_x - astro_pos.x) * (page.scrollTop / page.clientHeight);
+    astro.scroll_offset.y = (astro_scroll_goal_y - astro_pos.y) * (page.scrollTop / page.clientHeight);
 
-    astro_offset_x = astro_offset_float_x + astro_offset_scroll_x;
-    astro_offset_y = astro_offset_float_y + astro_offset_scroll_y;
+    astro.offset.x = astro.scroll_offset.x + astro.float_offset.x;
+    astro.offset.y = astro.scroll_offset.y + astro.float_offset.y;
     
-    const astro_x = _astro_x  + astro_offset_x;
-    const astro_y = _astro_y + astro_offset_y;
+    astro.pos.x = astro_pos.x + astro.offset.x;
+    astro.pos.y = astro_pos.y + astro.offset.y;
+}
 
-    // Render
-
+function render() {
     ctx.globalAlpha = 1.0;
     ctx.fillStyle = "#081016";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Render stars
+    // Stars
 
-    for (const star of stars) {
+    for (const star of stars.stars) {
         ctx.globalAlpha = Math.pow(star.shining_factor, 1 / 2.2);
         ctx.fillStyle = `rgb(255, 255, 255)`;
-        ctx.fillRect(star.x * canvas.width, star.y * canvas.height, 1, 1);
+        ctx.fillRect(star.pos.x * canvas.width, star.pos.y * canvas.height, STAR_SIZE, STAR_SIZE);
     }
 
-    // Render images
+    // Images
 
     ctx.globalAlpha = 1.0;
 
     ctx.drawImage(
         imageMap.get("moon.png")!,
-        moon_x * canvas.width,
-        moon_y * canvas.height,
-        moon_size * canvas.width,
-        moon_size * canvas.width,
+        moon.pos.x * canvas.width,
+        moon.pos.y * canvas.height,
+        MOON_SIZE * canvas.width,
+        MOON_SIZE * canvas.width,
     );
+
+    const astro_dims = imgDims("astronaut.png");
     
     ctx.drawImage(
         imageMap.get("astronaut.png")!,
-        astro_x * canvas.width,
-        astro_y * canvas.height,
-        astro_w * canvas.width,
-        astro_h * canvas.height,
+        astro.pos.x * canvas.width,
+        astro.pos.y * canvas.height,
+        ASTRO_WIDTH * canvas.width,
+        (ASTRO_WIDTH * canvas.width) / (astro_dims.x / astro_dims.y),
     );
-
-    requestAnimationFrame(render);
 }
 
-function imgAdd(src: string) {
-    const img = new Image();
-    img.src = src;
-    imageMap.set(src, img);
+function frame(timestamp: DOMHighResTimeStamp) {
+    const delta = (timestamp - last_timestamp) / 1000;
+    last_timestamp = timestamp;
+
+    update(delta, timestamp);
+    render();
+
+    requestAnimationFrame(frame);
 }
 
-function imgDims(src: string): [number, number] {
+async function init() {
+    page = document.getElementById("page")! as HTMLDivElement;
+    canvas = document.getElementById("bg")! as HTMLCanvasElement;
+    ctx = canvas.getContext("2d")!;
+
+    await imgAdd("moon.png");
+    await imgAdd("astronaut.png");
+
+    for (let i = 0; i < STAR_NUM; i++) {
+        stars.stars.push({
+            pos: { x: Math.random(), y: Math.random() },
+            last_shined: 0,
+            shining_time: (STAR_SHINE_DUR * 0.2) + (Math.random() * (STAR_SHINE_DUR * 0.8)),
+            float_speed_factor: (STAR_FLOAT_SPEED * 0.60) + (Math.random() * (STAR_FLOAT_SPEED * 0.40)),
+            shining_factor: 0
+        });
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    resizeObserver.observe(document.body);
+
+    window.addEventListener("blur", () => {
+        stars.scroll_amount = 0;
+    });
+
+    requestAnimationFrame(frame);
+}
+
+function imgAdd(src: string): Promise<void> {
+    return new Promise((res) => {
+        const img = new Image();
+        img.onload = () => res();
+        img.src = src;
+
+        imageMap.set(src, img);
+    });
+}
+
+function imgDims(src: string): Vec2 {
     const img = imageMap.get(src)!;
-    return [img.width, img.height];
+    return { x: img.width, y: img.height };
 }
 
 function BackgroundCanvas() {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-
     useEffect(() => {
-        canvas = canvasRef.current!;
-        ctx = canvas.getContext("2d")!;
-
-        page = document.getElementById("page")! as HTMLDivElement;
-        imgAdd("moon.png");
-        imgAdd("astronaut.png");
-
-        for (let i = 0; i < no_of_stars; i++) {
-            const x = Math.random();
-            const y = Math.random();
-            const shining_time = (star_shine_time * 0.2) + (Math.random() * (star_shine_time * 0.8));
-            const float_speed_factor = (star_float_speed * 0.60) + (Math.random() * (star_float_speed * 0.40));
-
-            stars.push({
-                x,
-                y,
-                last_shined: 0,
-                shining_time,
-                float_speed_factor,
-                shining_factor: 0
-            });
-        }
-
-        const resizeObserver = new ResizeObserver(() => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-        
-        resizeObserver.observe(document.body);
-
-        window.addEventListener("blur", () => {
-            star_scroll_amount = 0;
-        });
-
-        requestAnimationFrame(render);
+        init();
     }, [])
 
-    return <canvas ref={canvasRef} className="fixed top-0 left-0 w-screen h-screen z-0"></canvas>
+    return <canvas id="bg" className="fixed top-0 left-0 w-screen h-screen z-0"></canvas>
 };
 
 export default BackgroundCanvas;
