@@ -66,7 +66,7 @@ const moon: Moon = {
 
 const astro: Astronaut = {
     pos: { x: 0, y: 0 },
-    float_dir: { x: 0, y: 0 },
+    float_dir: { x: 1, y: 1 },
     float_offset: { x: 0, y: 0 },
     scroll_offset: { x: 0, y: 0 },
     offset: { x: 0, y: 0 }
@@ -149,8 +149,8 @@ function update(delta: number, timestamp: number) {
     astro.float_offset.x += astro.float_dir.x * ASTRO_FLOAT_SPEED * delta * 0.0005;
     astro.float_offset.y += astro.float_dir.y * ASTRO_FLOAT_SPEED * delta * 0.0005;
 
-    astro.float_offset.x = Math.max(Math.min(astro.float_offset.x, 0.05), -0.05);
-    astro.float_offset.y = Math.max(Math.min(astro.float_offset.y, 0.05), -0.05);
+    astro.float_offset.x = Math.max(Math.min(astro.float_offset.x, 0.1), -0.1);
+    astro.float_offset.y = Math.max(Math.min(astro.float_offset.y, 0.1), -0.1);
 
     const astro_scroll_goal_x = 1 + astro_dims.x;
     const astro_scroll_goal_y = 0;
