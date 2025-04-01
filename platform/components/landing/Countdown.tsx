@@ -31,7 +31,7 @@ function Countdown() {
     }, []);
 
     return (
-        <div className="w-full flex justify-between text-md md:text-3xl drop-shadow-[0px_0px_5px_#ffffff44]">
+        <div className="w-full flex gap-4 text-md md:text-2xl drop-shadow-[0px_0px_5px_#ffffff44]">
             <div className="inline-flex flex-col items-center">
                 <span ref={days}>0</span>
                 <span>Days</span>

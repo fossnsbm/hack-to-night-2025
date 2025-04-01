@@ -12,12 +12,6 @@ const silkscreen = Silkscreen({
   variable: "--font-krona-one",
 });
 
-const silkscreen = Silkscreen({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-krona-one",
-});
-
 export const metadata: Metadata = {
   title: "Hackto Night 2025",
   description: "@Todo",
