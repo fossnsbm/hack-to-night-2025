@@ -1,4 +1,4 @@
-const questions = [
+const faqItems = [
     {
         id: 1,
         question: "Lorem ipsum dolor sit amet?",
@@ -24,6 +24,11 @@ const questions = [
         question: "Lorem ipsum dolor sit amet?",
         answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
+    {
+        id: 6,
+        question: "Lorem ipsum dolor sit amet?",
+        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    },
 ];
 
-export default questions;
+export default faqItems;
