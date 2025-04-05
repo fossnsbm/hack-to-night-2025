@@ -13,12 +13,12 @@ export default function FAQAccordion({
         <div className="overflow-hidden border-2 border-dashed text-center">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between p-5 text-left"
+                className="w-full flex items-center justify-between p-2 text-center"
             >
                 <span className="text-xl">{item.question}</span>
                 <FaAngleDoubleDown
                     className={cn(
-                        "h-5 w-5 transition-transform duration-200",
+                        "h-4 w-4 transition-transform duration-200",
                         isOpen && "transform rotate-180"
                     )}
                 />
@@ -29,7 +29,7 @@ export default function FAQAccordion({
                     isOpen ? "max-h-96" : "max-h-0"
                 )}
             >
-                <div className="p-5 border-t-2 border-b-0 border-y-0 border-dashed">
+                <div className="p-2 border-t-2 border-b-0 border-y-0 border-dashed text-sm">
                     {item.answer}
                 </div>
             </div>
