@@ -1,30 +1,53 @@
-import { motion } from "framer-motion";
-import React from "react";
+"use client";
 
-interface ComponentProps {
-    isVisible: boolean;
+import React, { useState, useEffect } from "react";
+import * as motion from "motion/react-client";
+
+function TextStream() {
+    const text = "amet, eiusmod ut ut sit aliquip Lorem nisi adipiscing do dolore laboris veniam, et ex exercitation ea consectetur Ut ullamco consequat. tempor magna incididunt Sed enim aliqua. elit. nostrud ipsum labore commodo ad quis minim dolor amet, laboris commodo ut eiusmod dolor Ut elit. quis veniam, ut Sed consectetur exercitation sit ullamco adipiscing dolore nisi consequat. tempor ea labore ad do minim et ipsum aliqua. aliquip Lorem enim incididunt ex nostrud magna veniam, Ut amet, laboris nostrud incididunt eiusmod ad";
+
+    const [displayedCharCount, setDisplayedCharCount] = useState(0);
+
+    useEffect(() => {
+        if (displayedCharCount >= text.length) return;
+        const wordTimer = setTimeout(() => {
+            setDisplayedCharCount(prevCount => prevCount + 1);
+        }, 50);
+        return () => clearTimeout(wordTimer);
+    }, [displayedCharCount, text.length]);
+
+    return (
+        <div className="w-full max-w-5xl mx-auto text-justify text-sm">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                viewport={{ once: true }}
+            >
+                {text.substring(0, displayedCharCount)}
+                {displayedCharCount < text.length && (
+                    <span className="animate-pulse">|</span>
+                )}
+            </motion.div>
+        </div>
+    );
 }
 
-export function Component({ isVisible }: ComponentProps) {
-    return <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />;
-}
 
 function About() {
     return (
         <section id="about-us">
-        <div className="w-full h-full flex justify-center md:justify-end">
-            <div className="md:h-full gap-8 inline-flex flex-col items-center mt-[20%] md:mt-0 md:justify-center md:items-start">
-                <span className="text-3xl md:text-5xl">About us</span>
-                <p className="max-w-lg">
-                    HacktoNight is an annual event organized by FOSS community in nsbm. This remarkable gathering aims to inspire individuals to contribute to the world of open source, fostering a spirit of collaboration and innovation. Open to everyone, HacktoNight provides a platform for tech enthusiasts, developers, and open-source advocates to come together, share knowledge, and celebrate the essence of open-source culture.
-                    <br /> <br />
-                    This event is not just a celebration but a movement to empower individuals to explore, learn, and make meaningful contributions to open-source projects. Whether you are a seasoned programmer or a curious beginner, HacktoNight welcomes you to be part of this vibrant and inclusive community, marking another milestone in the journey of open-source innovation.
-                </p>
+            <div className="w-full h-full flex flex-col items-center justify-center">
+                <div className="md:h-full w-full flex flex-col items-center gap-6 mt-[40%] md:mt-12 md:justify-center">
+                    <motion.div initial={{ scale: 0.8 }} whileInView={{ scale: 1, transition: { duration: 0.4 } }}>
+                        <h2 className="text-2xl md:text-3xl text-center mb-4">About Us</h2>
+                    </motion.div>
+                    <TextStream />
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     );
 }
 
-export default About;
 
+export default About;
