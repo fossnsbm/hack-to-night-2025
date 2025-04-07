@@ -12,7 +12,7 @@ export default function FormSection() {
         <form className="snap-start h-screen w-full py-[50px] px-4 flex flex-col items-center justify-center">
             <h1 className="font-bold text-2xl m-4">{parts[part].title}</h1>
             {parts[part].fields.map((field) => (
-                <div key={field.name} className="m-1 text-center">
+                <div key={field.name} className="m-1 text-center w-full max-w-md flex justify-between items-center">
                     <label htmlFor={field.name} className="m-2">
                         {field.label}
                     </label>
@@ -22,6 +22,7 @@ export default function FormSection() {
                         required={parts[part].required}
                         className="border-2 border-dotted"
                         {...register(field.name as keyof Form)}
+                        disabled
                     />
                 </div>
             ))}
