@@ -45,35 +45,38 @@ function Footer() {
 
 						<div className="flex flex-col items-center sm:items-end order-2 sm:order-3">
 							<div className="flex gap-3 sm:gap-4 text-[#fcfcfc] text-lg sm:text-xl">
-								<a href="https://www.facebook.com/foss.nsbm/" target="_blank" rel="noopener noreferrer">
-									<FaFacebook className="hover:text-blue-500 transition duration-300 cursor-pointer" />
+								<a href="https://www.facebook.com/foss.nsbm/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition duration-300 cursor-pointer">
+								<FaFacebook />
 								</a>
 								<a
 									href="https://www.instagram.com/fossnsbm?igsh=a2M1MHJnYzdxOHN2"
 									target="_blank"
 									rel="noopener noreferrer"
+									className="hover:text-pink-500 transition duration-300 cursor-pointer"
 								>
-									<BsInstagram className="hover:text-pink-500 transition duration-300 cursor-pointer" />
+									<BsInstagram />
 								</a>
-								<a href="https://x.com/fossnsbm" target="_blank" rel="noopener noreferrer">
-									<BsTwitter className="hover:text-blue-400 transition duration-300 cursor-pointer" />
+								<a href="https://x.com/fossnsbm" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition duration-300 cursor-pointer">
+									<BsTwitter />
 								</a>
-								<a href="https://blog.fossnsbm.org/" target="_blank" rel="noopener noreferrer">
-									<FaMedium className="hover:text-gray-500 transition duration-300 cursor-pointer" />
+								<a href="https://blog.fossnsbm.org/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-500 transition duration-300 cursor-pointer">
+									<FaMedium />
 								</a>
 								<a
 									href="https://www.youtube.com/@fosscommunitynsbm/videos"
 									target="_blank"
 									rel="noopener noreferrer"
+									className="hover:text-red-500 transition duration-300 cursor-pointer"
 								>
-									<FaYoutube className="hover:text-red-500 transition duration-300 cursor-pointer" />
+									<FaYoutube />
 								</a>
 								<a
 									href="https://www.linkedin.com/company/fossnsbm?originalSubdomain=lk"
 									target="_blank"
 									rel="noopener noreferrer"
+									className="hover:text-blue-700 transition duration-300 cursor-pointer"
 								>
-									<FaLinkedinIn className="hover:text-blue-700 transition duration-300 cursor-pointer" />
+									<FaLinkedinIn />
 								</a>
 							</div>
 
