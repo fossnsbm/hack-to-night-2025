@@ -13,7 +13,7 @@ function TextStream() {
         if (displayedCharCount >= text.length) return;
         const wordTimer = setTimeout(() => {
             setDisplayedCharCount((prevCount) => prevCount + 1);
-        }, 50);
+        }, 20);
         return () => clearTimeout(wordTimer);
     }, [displayedCharCount, text.length]);
 
@@ -36,24 +36,20 @@ function TextStream() {
 
 function About() {
     return (
-        <section id="about-us">
-            <div className="flex flex-col items-center justify-center snap-start h-screen w-full py-[50px] px-4">
-                <div className="md:h-full w-full flex flex-col items-center gap-6 mt-[40%] md:mt-12 md:justify-center">
-                    <motion.div
-                        initial={{ scale: 0.8 }}
-                        whileInView={{
-                            scale: 1,
-                            transition: { duration: 0.4 },
-                        }}
-                    >
-                        <h2 className="text-2xl md:text-3xl text-center mb-4">
-                            About Us
-                        </h2>
-                    </motion.div>
-                    <TextStream />
-                </div>
-            </div>
-        </section>
+        <div className="md:h-full w-full flex flex-col items-center gap-6 mt-[40%] md:mt-12 md:justify-center">
+            <motion.div
+                initial={{ scale: 0.8 }}
+                whileInView={{
+                    scale: 1,
+                    transition: { duration: 0.4 },
+                }}
+            >
+                <h2 className="text-2xl md:text-3xl text-center mb-4">
+                    About Us
+                </h2>
+            </motion.div>
+            <TextStream />
+        </div>
     );
 }
 
