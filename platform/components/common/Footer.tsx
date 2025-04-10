@@ -40,7 +40,7 @@ function Footer() {
 
 						<div className="flex justify-center gap-4 order-3 sm:order-2">
 							<img src="/FOSS.png" alt="FOSS" className="h-10 sm:h-15 w-auto" />
-							<img src="/womeninFoss.png" alt="Women In FOSS" className="h-8 sm:h-12 w-auto" />
+							<img src="/WomenInFOSS.png" alt="Women In FOSS" className="h-8 sm:h-12 w-auto" />
 						</div>
 
 						<div className="flex flex-col items-center sm:items-end order-2 sm:order-3">
