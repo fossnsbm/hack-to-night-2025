@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from "react";
 import * as motion from "motion/react-client";
 
+import Title from "@/components/common/Title";
+import Section from "@/components/landing/Section";
+
 function TextStream() {
     const text =
         "amet, eiusmod ut ut sit aliquip Lorem nisi adipiscing do dolore laboris veniam, et ex exercitation ea consectetur Ut ullamco consequat. tempor magna incididunt Sed enim aliqua. elit. nostrud ipsum labore commodo ad quis minim dolor amet, laboris commodo ut eiusmod dolor Ut elit. quis veniam, ut Sed consectetur exercitation sit ullamco adipiscing dolore nisi consequat. tempor ea labore ad do minim et ipsum aliqua. aliquip Lorem enim incididunt ex nostrud magna veniam, Ut amet, laboris nostrud incididunt eiusmod ad";
@@ -34,23 +37,13 @@ function TextStream() {
     );
 }
 
-function About() {
+export default function AboutSection() {
     return (
-        <div className="md:h-full w-full flex flex-col items-center gap-6 mt-[40%] md:mt-12 md:justify-center">
-            <motion.div
-                initial={{ scale: 0.8 }}
-                whileInView={{
-                    scale: 1,
-                    transition: { duration: 0.4 },
-                }}
-            >
-                <h2 className="text-2xl md:text-3xl text-center mb-4">
-                    About Us
-                </h2>
-            </motion.div>
-            <TextStream />
-        </div>
+        <Section id="about">
+            <div className="md:h-full w-full flex flex-col items-center gap-8 mt-[40%] md:mt-12 md:justify-center">
+                <Title title="About Us" />
+                <TextStream />
+            </div>
+        </Section>
     );
 }
-
-export default About;
