@@ -5,7 +5,7 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-[50px] bg-opacity-90 bg-[url('/space-background.jpg')] bg-cover text-white">
+    <div className="fixed top-0 left-0 w-screen h-[50px] text-white">
       <div className="h-full px-8 max-w-7xl mx-auto relative flex items-center ">
 
         <div className="hidden md:flex gap-28 h-full px-8 max-w-7xl mx-auto relative flex items-center">
