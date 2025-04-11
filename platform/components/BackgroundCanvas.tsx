@@ -14,7 +14,7 @@ const MOON_SIZE = is_mobile ? 0.80 : 0.40;
 const ASTRO_WIDTH = is_mobile ? 0.30 : 0.10;
 const ASTRO_FLOAT_SPEED = 5;
 
-const SPACESHIP_WIDTH = 0.2
+const SPACESHIP_WIDTH = is_mobile ? 0.40 : 0.20;
 
 type Vec2 = {
     x: number,
@@ -188,13 +188,13 @@ function update(delta: number, timestamp: number) {
 
     const scroll_top_rt_ch = scroll_top / canvas.height;
     if (scroll_top <= canvas.height) {
-        spaceship.pos.x = (scroll_top_rt_ch * 0.3) - spaceship_dims.x;
+        spaceship.pos.x = (scroll_top_rt_ch * (0.2 + spaceship_dims.x)) - spaceship_dims.x;
         spaceship.pos.y = 1 - spaceship_dims.y - (scroll_top_rt_ch * 0.1);
     } else {
         const scroll_top_diff = scroll_top - canvas.height;
         const scroll_top_diff_rt = scroll_top_diff / canvas.height;
 
-        const sx = 0.3 - spaceship_dims.x;
+        const sx = 0.2;
         const dx = 1 - sx;
         spaceship.pos.x = sx + (scroll_top_diff_rt * dx);
 
