@@ -24,10 +24,7 @@ const faqItems = [
         question: "What should I bring?",
         answer: "Bring the essentials:\nA laptop with required software/tools\nChargers and power banks\nStudent ID\nAny personal items you need for an overnight stay (snacks, water, hoodie, etc.)\n A positive attitude and team spirit!",
     },
-    {
-        question: "Is there a participation fee?",
-        answer: "Nope! HacktoNight is completely free to attend. The FOSS Community believes in providing open, accessible opportunities for all students passionate about tech.",
-    },
+    
     {
         question: "Who can I contact for more information?",
         answer: "For more details, contact the FOSS Community of NSBM through:\nInstagram: @fossnsbm\nEmail: fosscommunitynsbm@gmail.com\nOr reach out to the organizers listed on the event poster.",
@@ -50,10 +47,10 @@ function AccordionItem({ index, question, answer, openItem, setOpenItem }: Accor
     const isOpen = openItem == index
 
     return (
-        <div className="overflow-hidden border-2 border-dashed">
+        <div className="overflow-hidden border-2 rounded-lg border-gray-300 shadow-md bg-white dark:bg-gray-800 dark:border-gray-500">
             <button
                 onClick={() => setOpenItem(isOpen ? -1 : index)}
-                className="w-full flex items-center justify-between p-2"
+                className="w-full flex items-center justify-between p-4"
             >
                 <span className="text-sm md:text-lg">{question}</span>
                 <FaAngleDoubleDown
@@ -69,7 +66,7 @@ function AccordionItem({ index, question, answer, openItem, setOpenItem }: Accor
                     isOpen ? "max-h-96" : "max-h-0"
                 )}
             >
-                <div className="p-2 border-t-2 border-b-0 border-y-0 border-dashed text-xs">
+                <div className="p-2 border-t-2 border-b-0 border-y-0 text-xs">
                     {answer}
                 </div>
             </div>
@@ -84,7 +81,7 @@ export default function FAQSection() {
         <Section id="faq">
             <div className="w-full h-full flex flex-col gap-8 items-center justify-center md:p-[25%]">
                 <Title title="FAQ" />
-                <div className="grid grid-cols-1 gap-1 whitespace-pre-line">
+                <div className="grid grid-cols-1 gap-2 whitespace-pre-line">
                     {faqItems.map((item, index) => (
                         <AccordionItem 
                             key={index} 
