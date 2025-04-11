@@ -1,19 +1,27 @@
 'use client';
 import Image from 'next/image';
-
-const teams = [
-  { rank: 1, name: 'Lunar Legends', score: 9800, image: '/moon.png'},
-  { rank: 2, name: 'Galaxy Gals', score: 8700, image: '/moon.png' },
-  { rank: 3, name: 'Astro Aces', score: 8200, image: '/moon.png' },
-  { rank: 4, name: 'Nebula Knights', score: 7500 },
-  { rank: 5, name: 'Meteor Masters', score: 7300 },
-];
+import { useEffect, useState } from 'react';
+import { getTeams } from '@/lib/getTeams';
+import { Team } from '@/lib/getTeams';
 
 const Scoreboard = () => {
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  useEffect(() => {
+    getTeams().then((r) => setTeams(r));
+  }, []);
+
+  if (teams.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white text-xl">
+        Loading teams...
+      </div>
+    );
+  }
+
   const podium = teams.slice(0, 3);
   const others = teams.slice(3);
 
-  // Ensure 1st is in the middle
   const sortedPodium = [
     podium.find((t) => t.rank === 2)!,
     podium.find((t) => t.rank === 1)!,
@@ -25,26 +33,34 @@ const Scoreboard = () => {
       <div className="max-w-7xl mx-auto">
         {/* Podium */}
         <div className="border border-cyan-400 p-8 rounded-md shadow-xl mb-8">
-        <div className="flex justify-center gap-8 items-end ">
-          {sortedPodium.map((team) => (
-            <div
-              key={team.rank}
-              className={`relative flex flex-col items-center text-center ${
-                team.rank === 1 ? 'scale-110 z-10' : 'scale-90'
-              }`}
-            >
-              <div className="hexagon-podium bg-[#0d1b2a] border-10 border-cyan-400 p-6">
-                <div className="w-28 h-28 rounded-full overflow-hidden mx-auto mb-2 border-2 border-cyan-400">
-                  <Image src={team.image || '/images/default-avatar.png'} alt={team.name} width={112} height={112} />
+          <div className="flex justify-center gap-8 items-end">
+            {sortedPodium.map((team) => (
+              <div
+                key={team.rank}
+                className={`relative flex flex-col items-center text-center ${
+                  team.rank === 1 ? 'scale-110 z-10' : 'scale-90'
+                }`}
+              >
+                <div className="hexagon-podium bg-[#0d1b2a] border-10 border-cyan-400 p-6">
+                  <div className="w-28 h-28 rounded-full overflow-hidden mx-auto mb-2 border-2 border-cyan-400">
+                    <Image
+                      src={team.image || '/images/default-avatar.png'}
+                      alt={team.teamname}
+                      width={112}
+                      height={112}
+                    />
+                  </div>
+                  <p className="text-xl font-bold mb-1">
+                    {team.rank === 1 ? '1st' : team.rank === 2 ? '2nd' : '3rd'}
+                  </p>
+                  <p className="text-md">{team.teamname}</p>
+                  <p className="text-sm text-cyan-200">{team.score}</p>
                 </div>
-                <p className="text-xl font-bold mb-1">{team.rank === 1 ? '1st' : team.rank === 2 ? '2nd' : '3rd'}</p>
-                <p className="text-md">{team.name}</p>
-                <p className="text-sm text-cyan-200">{team.score}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        </div>
+
         {/* Lower ranks */}
         <div className="space-y-6">
           {others.map((team) => (
@@ -57,7 +73,7 @@ const Scoreboard = () => {
                   {team.rank}th
                 </div>
                 <div className="text-lg px-6 py-4 font-semibold tracking-wide">
-                  {team.name}
+                  {team.teamname}
                 </div>
               </div>
               <div className="px-6 text-lg font-bold text-cyan-300">{team.score}</div>
@@ -79,3 +95,6 @@ const Scoreboard = () => {
 };
 
 export default Scoreboard;
+
+
+
