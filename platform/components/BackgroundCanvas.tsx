@@ -12,9 +12,9 @@ const STAR_SHINE_DUR = 10000;
 const MOON_SIZE = is_mobile ? 0.80 : 0.40;
 
 const ASTRO_WIDTH = is_mobile ? 0.30 : 0.10;
-const ASTRO_FLOAT_SPEED = 5;
+const ASTRO_FLOAT_SPEED = 10;
 
-const SPACESHIP_FLOAT_SPEED = 10;
+const SPACESHIP_FLOAT_SPEED = 20;
 const SPACESHIP_WIDTH = is_mobile ? 0.40 : 0.20;
 
 type Vec2 = {

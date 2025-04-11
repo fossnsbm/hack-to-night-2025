@@ -21,7 +21,7 @@ function TextStream() {
     }, [displayedCharCount, text.length]);
 
     return (
-        <div className="w-full max-w-5xl mx-auto text-justify text-sm">
+        <div className="w-full max-w-5xl mx-auto text-justify text-sm md:text-base">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -40,7 +40,7 @@ function TextStream() {
 export default function AboutSection() {
     return (
         <Section id="about">
-            <div className="md:h-full w-full flex flex-col items-center gap-8 mt-[40%] md:mt-12 md:justify-center">
+            <div className="h-full w-full flex flex-col items-center gap-8 justify-center md:justify-start md:mt-32">
                 <Title title="About Us" />
                 <TextStream />
             </div>
