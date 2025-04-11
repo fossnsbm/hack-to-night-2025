@@ -15,7 +15,7 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={"fixed z-50 top-0 left-0 w-screen h-[50px] text-white transition" + (isOpen ? " bg-black" : "")}>
+    <div className={"fixed z-50 top-0 left-0 w-dvw h-[50px] text-white transition" + (isOpen ? " bg-black" : "")}>
       <div className="h-full px-8 max-w-7xl mx-auto relative flex items-center">
         <div className="hidden md:flex gap-28 h-full px-8 max-w-7xl mx-auto relative items-end">
           {Object.entries(navItems).map(([name, href]) => (

@@ -11,19 +11,19 @@ export default function MemoriesSection() {
                 <Title title="Memories" />
                 <div className="hidden md:inline-flex items-center h-[30dvh]">
                     <div className="relative aspect-square rounded-full overflow-hidden h-full scale-75 translate-x-[40%] z-10 hover:scale-125 hover:z-40 transition">
-                        <Image className="object-cover" src="/memory-1.jpg" alt="Memory Image 1" fill />
+                        <Image className="rounded-full object-cover" src="/memory-1.jpg" alt="Memory Image 1" fill />
                     </div>
                     <div className="relative aspect-square rounded-full overflow-hidden h-full scale-90 translate-x-[15%] z-20 hover:scale-125 hover:z-40 transition">
-                        <Image className="object-cover" src="/memory-2.jpg" alt="Memory Image 2" fill />
+                        <Image className="rounded-full object-cover" src="/memory-2.jpg" alt="Memory Image 2" fill />
                     </div>
                     <div className="relative aspect-square rounded-full overflow-hidden h-full scale-100 z-30 hover:scale-125 hover:z-40 transition">
-                        <Image className="object-cover" src="/memory-3.jpg" alt="Memory Image 3" fill />
+                        <Image className="roudned-full object-cover" src="/memory-3.jpg" alt="Memory Image 3" fill />
                     </div>
                     <div className="relative aspect-square rounded-full overflow-hidden h-full scale-90 -translate-x-[15%] z-20 hover:scale-125 hover:z-40 transition">
-                        <Image className="object-cover" src="/memory-4.jpg" alt="Memory Image 4" fill />
+                        <Image className="rounded-full object-cover" src="/memory-4.jpg" alt="Memory Image 4" fill />
                     </div>
                     <div className="relative aspect-square rounded-full overflow-hidden h-full scale-75 -translate-x-[40%] z-10 hover:scale-125 hover:z-40 transition">
-                        <Image className="object-cover" src="/memory-5.jpg" alt="Memory Image 5" fill />
+                        <Image className="rounded-full object-cover" src="/memory-5.jpg" alt="Memory Image 5" fill />
                     </div>
                 </div>
                 {/* Mobile */}

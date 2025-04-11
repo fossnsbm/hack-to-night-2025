@@ -28,7 +28,7 @@ export default function RootLayout({
         className={`${silkscreen.className} antialiased`}
       >
         <BackgroundCanvas />
-        <main className="fixed top-0 left-0 w-screen h-screen z-10 flex flex-col">
+        <main className="fixed top-0 left-0 w-dvw h-dvh z-10 flex flex-col">
             <div id="page" className="snap-y snap-mandatory overflow-y-auto font-sans scroll-smooth">
                 <Header />
                 {children}

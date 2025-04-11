@@ -326,7 +326,7 @@ function BackgroundCanvas() {
         init();
     }, [])
 
-    return <canvas id="bg" className="fixed top-0 left-0 w-screen h-screen z-0"></canvas>
+    return <canvas id="bg" className="fixed top-0 left-0 w-dvw h-dvh z-0"></canvas>
 };
 
 export default BackgroundCanvas;
