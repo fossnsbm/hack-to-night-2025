@@ -207,12 +207,13 @@ function update(delta: number, timestamp: number) {
         spaceship.pos.y = (sy - 0.1) + (scroll_top_diff_rt * 0.1);
     }
 
-    if (spaceship.float_offset_y > 0.025 || spaceship.float_offset_y < 0) {
+    if (spaceship.float_offset_y >= 0.025 || spaceship.float_offset_y <= 0) {
         spaceship.float_dir_y *= -1
     }
     
     const ss_float_delta = spaceship.float_dir_y * SPACESHIP_FLOAT_SPEED * delta * 0.0005;
     spaceship.float_offset_y += ss_float_delta;
+    spaceship.float_offset_y = Math.min(Math.max(spaceship.float_offset_y, 0), 0.025);
     spaceship.pos.y += spaceship.float_offset_y;
 }
 

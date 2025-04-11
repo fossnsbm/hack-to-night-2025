@@ -9,28 +9,32 @@ import Section from "@/components/landing/Section";
 
 const faqItems = [
     {
-        question: "Lorem ipsum dolor sit amet?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        question: "What is HacktoNight?",
+        answer: "HacktoNight is an overnight hackathon organized by the FOSS Community of NSBM. It’s a high-energy event where student teams come together to develop innovative solutions to real-world problems. Participants brainstorm, build, and present their ideas within a limited time — boosting creativity, collaboration, and practical tech skills.",
     },
     {
-        question: "Lorem ipsum dolor sit amet?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        question: "What are the team requirements for the event?",
+        answer: "Teams must consist of 4 to 6 members. Each member should be a currently enrolled undergraduate. Interdisciplinary teams are encouraged to bring diverse ideas and strengths to the table.",
     },
     {
-        question: "Lorem ipsum dolor sit amet?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        question: "How do I register?",
+        answer: "You can register through the official HacktoNight registration link shared on FOSS NSBM’s social media pages and the NSBM student portal. Just fill out the form with your team details and submit it before the deadline.",
     },
     {
-        question: "Lorem ipsum dolor sit amet?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        question: "What should I bring?",
+        answer: "Bring the essentials:\nA laptop with required software/tools\nChargers and power banks\nStudent ID\nAny personal items you need for an overnight stay (snacks, water, hoodie, etc.)\n A positive attitude and team spirit!",
     },
     {
-        question: "Lorem ipsum dolor sit amet?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        question: "Is there a participation fee?",
+        answer: "Nope! HacktoNight is completely free to attend. The FOSS Community believes in providing open, accessible opportunities for all students passionate about tech.",
     },
     {
-        question: "Lorem ipsum dolor sit amet?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        question: "Who can I contact for more information?",
+        answer: "For more details, contact the FOSS Community of NSBM through:\nInstagram: @fossnsbm\nEmail: fosscommunitynsbm@gmail.com\nOr reach out to the organizers listed on the event poster.",
+    },
+    {
+        question: "Who can participate?",
+        answer: "Any NSBM undergraduate interested in coding, designing, or tech innovation can participate — whether you’re a developer, designer, or idea generator. Beginners and experienced students are all welcome!",
     },
 ];
 
@@ -46,10 +50,10 @@ function AccordionItem({ index, question, answer, openItem, setOpenItem }: Accor
     const isOpen = openItem == index
 
     return (
-        <div className="overflow-hidden border-2 border-dashed text-center">
+        <div className="overflow-hidden border-2 border-dashed">
             <button
                 onClick={() => setOpenItem(isOpen ? -1 : index)}
-                className="w-full flex items-center justify-between p-2 text-center"
+                className="w-full flex items-center justify-between p-2"
             >
                 <span className="text-sm md:text-lg">{question}</span>
                 <FaAngleDoubleDown
@@ -65,7 +69,7 @@ function AccordionItem({ index, question, answer, openItem, setOpenItem }: Accor
                     isOpen ? "max-h-96" : "max-h-0"
                 )}
             >
-                <div className="p-2 border-t-2 border-b-0 border-y-0 border-dashed text-xs md:text-sm">
+                <div className="p-2 border-t-2 border-b-0 border-y-0 border-dashed text-xs">
                     {answer}
                 </div>
             </div>
@@ -78,9 +82,9 @@ export default function FAQSection() {
 
     return (
         <Section id="faq">
-            <div className="w-full h-full flex flex-col gap-8 items-center justify-center md:p-[25%] text-center">
+            <div className="w-full h-full flex flex-col gap-8 items-center justify-center md:p-[25%]">
                 <Title title="FAQ" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-1 whitespace-pre-line">
                     {faqItems.map((item, index) => (
                         <AccordionItem 
                             key={index} 

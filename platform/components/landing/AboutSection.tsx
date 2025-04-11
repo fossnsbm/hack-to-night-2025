@@ -7,8 +7,7 @@ import Title from "@/components/common/Title";
 import Section from "@/components/landing/Section";
 
 function TextStream() {
-    const text =
-        "amet, eiusmod ut ut sit aliquip Lorem nisi adipiscing do dolore laboris veniam, et ex exercitation ea consectetur Ut ullamco consequat. tempor magna incididunt Sed enim aliqua. elit. nostrud ipsum labore commodo ad quis minim dolor amet, laboris commodo ut eiusmod dolor Ut elit. quis veniam, ut Sed consectetur exercitation sit ullamco adipiscing dolore nisi consequat. tempor ea labore ad do minim et ipsum aliqua. aliquip Lorem enim incididunt ex nostrud magna veniam, Ut amet, laboris nostrud incididunt eiusmod ad";
+    const text = `HacktoNight is an annual event organized by FOSS community in nsbm. This remarkable gathering aims to inspire individuals to contribute to the world of open source, fostering a spirit of collaboration and innovation. Open to everyone, HacktoNight provides a platform for tech enthusiasts, developers, and open-source advocates to come together, share knowledge, and celebrate the essence of open-source culture.\n\nThis event is not just a celebration but a movement to empower individuals to explore, learn, and make meaningful contributions to open-source projects. Whether you are a seasoned programmer or a curious beginner, HacktoNight welcomes you to be part of this vibrant and inclusive community, marking another milestone in the journey of open-source innovation.`;
 
     const [displayedCharCount, setDisplayedCharCount] = useState(0);
 
@@ -16,12 +15,12 @@ function TextStream() {
         if (displayedCharCount >= text.length) return;
         const wordTimer = setTimeout(() => {
             setDisplayedCharCount((prevCount) => prevCount + 1);
-        }, 20);
+        }, 10);
         return () => clearTimeout(wordTimer);
     }, [displayedCharCount, text.length]);
 
     return (
-        <div className="w-full max-w-5xl mx-auto text-justify text-sm md:text-base">
+        <div className="w-full max-w-5xl mx-auto text-justify text-xs md:text-sm whitespace-pre-line">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
