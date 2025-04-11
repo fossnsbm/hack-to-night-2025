@@ -14,6 +14,8 @@ const MOON_SIZE = is_mobile ? 0.80 : 0.40;
 const ASTRO_WIDTH = is_mobile ? 0.30 : 0.10;
 const ASTRO_FLOAT_SPEED = 5;
 
+const SPACESHIP_WIDTH = 0.2
+
 type Vec2 = {
     x: number,
     y: number
@@ -45,6 +47,10 @@ type Astronaut = {
     offset: Vec2,
 }
 
+type Spaceship = {
+    pos: Vec2
+}
+
 var page: HTMLDivElement;
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
@@ -72,9 +78,17 @@ const astro: Astronaut = {
     offset: { x: 0, y: 0 }
 }
 
+const spaceship: Spaceship = {
+    pos: { x: 0, y: 0 }
+}
+
 function update(delta: number, timestamp: number) {
-    const scroll_y_delta = page.scrollTop - last_scroll_y;
-    last_scroll_y = page.scrollTop;
+    const scroll_top = page.scrollTop;
+    const client_height = page.clientHeight;
+    const scroll_top_rt = scroll_top / client_height;
+
+    const scroll_y_delta = scroll_top - last_scroll_y;
+    last_scroll_y = scroll_top;
 
     // Stars
 
@@ -120,8 +134,8 @@ function update(delta: number, timestamp: number) {
         y: 2 + MOON_SIZE
     };
 
-    moon.offset.x = (moon_scroll_goal.x - moon_pos.x) * (page.scrollTop / page.clientHeight);
-    moon.offset.y = (moon_scroll_goal.y - moon_pos.y) * (page.scrollTop / page.clientHeight);
+    moon.offset.x = (moon_scroll_goal.x - moon_pos.x) * (scroll_top_rt);
+    moon.offset.y = (moon_scroll_goal.y - moon_pos.y) * (scroll_top_rt);
     
     moon.pos.x = moon_pos.x + moon.offset.x;
     moon.pos.y = moon_pos.y + moon.offset.y;
@@ -155,14 +169,38 @@ function update(delta: number, timestamp: number) {
     const astro_scroll_goal_x = 1 + astro_dims.x;
     const astro_scroll_goal_y = 0;
 
-    astro.scroll_offset.x = (astro_scroll_goal_x - astro_pos.x) * (page.scrollTop / page.clientHeight);
-    astro.scroll_offset.y = (astro_scroll_goal_y - astro_pos.y) * (page.scrollTop / page.clientHeight);
+    astro.scroll_offset.x = (astro_scroll_goal_x - astro_pos.x) * scroll_top_rt;
+    astro.scroll_offset.y = (astro_scroll_goal_y - astro_pos.y) * scroll_top_rt;
 
     astro.offset.x = astro.scroll_offset.x + astro.float_offset.x;
     astro.offset.y = astro.scroll_offset.y + astro.float_offset.y;
     
     astro.pos.x = astro_pos.x + astro.offset.x;
     astro.pos.y = astro_pos.y + astro.offset.y;
+
+    // Spaceship
+
+    const spaceship_src_dims = imgDims("spaceship.png");
+    const spaceship_dims: Vec2 = {
+        x: SPACESHIP_WIDTH,
+        y: ((SPACESHIP_WIDTH * canvas.width) / (spaceship_src_dims.x / spaceship_src_dims.y)) / canvas.height
+    };
+
+    const scroll_top_rt_ch = scroll_top / canvas.height;
+    if (scroll_top <= canvas.height) {
+        spaceship.pos.x = (scroll_top_rt_ch * 0.3) - spaceship_dims.x;
+        spaceship.pos.y = 1 - spaceship_dims.y - (scroll_top_rt_ch * 0.1);
+    } else {
+        const scroll_top_diff = scroll_top - canvas.height;
+        const scroll_top_diff_rt = scroll_top_diff / canvas.height;
+
+        const sx = 0.3 - spaceship_dims.x;
+        const dx = 1 - sx;
+        spaceship.pos.x = sx + (scroll_top_diff_rt * dx);
+
+        const sy = 1 - spaceship_dims.y;
+        spaceship.pos.y = (sy - 0.1) + (scroll_top_diff_rt * 0.1);
+    }
 }
 
 function render() {
@@ -199,6 +237,16 @@ function render() {
         ASTRO_WIDTH * canvas.width,
         (ASTRO_WIDTH * canvas.width) / (astro_dims.x / astro_dims.y),
     );
+    
+    const spaceship_dims = imgDims("spaceship.png");
+
+    ctx.drawImage(
+        imageMap.get("spaceship.png")!,
+        spaceship.pos.x * canvas.width,
+        spaceship.pos.y * canvas.height,
+        SPACESHIP_WIDTH * canvas.width,
+        (SPACESHIP_WIDTH * canvas.width) / (spaceship_dims.x / spaceship_dims.y),
+    );
 }
 
 function frame(timestamp: DOMHighResTimeStamp) {
@@ -218,6 +266,7 @@ async function init() {
 
     await imgAdd("moon.png");
     await imgAdd("astronaut.png");
+    await imgAdd("spaceship.png");
 
     for (let i = 0; i < STAR_NUM; i++) {
         stars.stars.push({
