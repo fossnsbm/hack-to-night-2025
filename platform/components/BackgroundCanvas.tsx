@@ -14,6 +14,7 @@ const MOON_SIZE = is_mobile ? 0.80 : 0.40;
 const ASTRO_WIDTH = is_mobile ? 0.30 : 0.10;
 const ASTRO_FLOAT_SPEED = 5;
 
+const SPACESHIP_FLOAT_SPEED = 10;
 const SPACESHIP_WIDTH = is_mobile ? 0.40 : 0.20;
 
 type Vec2 = {
@@ -49,6 +50,8 @@ type Astronaut = {
 
 type Spaceship = {
     pos: Vec2
+    float_dir_y: number
+    float_offset_y: number,
 }
 
 var page: HTMLDivElement;
@@ -79,7 +82,9 @@ const astro: Astronaut = {
 }
 
 const spaceship: Spaceship = {
-    pos: { x: 0, y: 0 }
+    pos: { x: 0, y: 0 },
+    float_dir_y: 1,
+    float_offset_y: 0,
 }
 
 function update(delta: number, timestamp: number) {
@@ -201,6 +206,14 @@ function update(delta: number, timestamp: number) {
         const sy = 1 - spaceship_dims.y;
         spaceship.pos.y = (sy - 0.1) + (scroll_top_diff_rt * 0.1);
     }
+
+    if (spaceship.float_offset_y > 0.025 || spaceship.float_offset_y < 0) {
+        spaceship.float_dir_y *= -1
+    }
+    
+    const ss_float_delta = spaceship.float_dir_y * SPACESHIP_FLOAT_SPEED * delta * 0.0005;
+    spaceship.float_offset_y += ss_float_delta;
+    spaceship.pos.y += spaceship.float_offset_y;
 }
 
 function render() {
