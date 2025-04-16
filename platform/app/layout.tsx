@@ -30,9 +30,9 @@ export default function RootLayout({
         <BackgroundCanvas />
         <main className="fixed top-0 left-0 w-screen h-screen z-10 flex flex-col">
             <div id="page" className="snap-y snap-mandatory overflow-y-auto font-sans">
-                <Header />
+                {/* <Header /> */}
                 {children}
-                <Footer />
+                {/* <Footer /> */}
             </div>
         </main>
       </body>
