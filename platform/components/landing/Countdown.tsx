@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useContest } from "@/contexts/ContestContext";
 
-const TARGET_TIME = new Date(2025, 4, 31, 0, 0, 0, 0);
 const MS = 1;
 const SECOND = MS * 1000;
 const MINUTE = SECOND * 60;
@@ -14,38 +14,50 @@ function Countdown() {
     const hours = useRef<HTMLSpanElement>(null);
     const mins = useRef<HTMLSpanElement>(null);
     const secs = useRef<HTMLSpanElement>(null);
-
+    
+    // Get contest start date from context
+    const { startDate } = useContest();
+    
     useEffect(() => {
-        const interval = setInterval(() => {
-            const diff = TARGET_TIME.getTime() - Date.now();
-
-            days.current!.textContent = ((diff / DAY) >> 0).toString().padStart(2, "0");
-            hours.current!.textContent = (((diff % DAY) / HOUR) >> 0).toString().padStart(2, "0");
-            mins.current!.textContent = (((diff % HOUR) / MINUTE) >> 0).toString().padStart(2, "0");
-            secs.current!.textContent = (((diff % MINUTE) / SECOND) >> 0).toString().padStart(2, "0");
-        }, 1000);
+        const updateCountdown = () => {
+            const diff = startDate.getTime() - Date.now();
+            
+            // Don't show negative numbers if the contest has already started
+            const remainingTime = Math.max(0, diff);
+            
+            days.current!.textContent = ((remainingTime / DAY) >> 0).toString().padStart(2, "0");
+            hours.current!.textContent = (((remainingTime % DAY) / HOUR) >> 0).toString().padStart(2, "0");
+            mins.current!.textContent = (((remainingTime % HOUR) / MINUTE) >> 0).toString().padStart(2, "0");
+            secs.current!.textContent = (((remainingTime % MINUTE) / SECOND) >> 0).toString().padStart(2, "0");
+        };
+        
+        // Update immediately
+        updateCountdown();
+        
+        // Then update every second
+        const interval = setInterval(updateCountdown, 1000);
 
         return () => {
             clearInterval(interval);
         }
-    }, []);
-
+    }, [startDate]);
+    
     return (
         <div className="w-full flex gap-4 text-md md:text-2xl drop-shadow-[0px_0px_5px_#ffffff44]">
             <div className="inline-flex flex-col items-center">
-                <span ref={days}>0</span>
+                <span ref={days}>00</span>
                 <span>Days</span>
             </div>
             <div className="inline-flex flex-col items-center">
-                <span ref={hours}>0</span>
+                <span ref={hours}>00</span>
                 <span>Hours</span>
             </div>
             <div className="inline-flex flex-col items-center">
-                <span ref={mins}>0</span>
+                <span ref={mins}>00</span>
                 <span>Minutes</span>
             </div>
             <div className="inline-flex flex-col items-center">
-                <span ref={secs}>0</span>
+                <span ref={secs}>00</span>
                 <span>Seconds</span>
             </div>
         </div>

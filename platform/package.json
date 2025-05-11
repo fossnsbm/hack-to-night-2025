@@ -6,17 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate --schema=./lib/schema.ts --out=./drizzle/migrations --dialect=sqlite",
+    "db:migrate": "tsx ./drizzle/migrate.ts",
+    "db:seed": "tsx ./drizzle/seed.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.15.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^11.10.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.43.1",
     "lucide-react": "^0.485.0",
     "motion": "^12.6.3",
     "next": "15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "socket.io-client": "^4.8.1",
+    "sqlite": "^5.1.1",
+    "swr": "^2.3.3",
     "tailwind-merge": "^3.1.0"
   },
   "devDependencies": {
@@ -24,7 +35,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.1",
     "tailwindcss": "^4",
+    "tsx": "^4.19.4",
     "typescript": "^5"
   }
 }

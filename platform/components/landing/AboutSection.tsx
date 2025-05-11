@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import * as motion from "motion/react-client";
 
 import Title from "@/components/common/Title";
-import Section from "@/components/landing/Section";
+import Section from "@/components/common/Section";
 
 function TextStream() {
     const text = `HacktoNight is an annual event organized by FOSS community in nsbm. This remarkable gathering aims to inspire individuals to contribute to the world of open source, fostering a spirit of collaboration and innovation. Open to everyone, HacktoNight provides a platform for tech enthusiasts, developers, and open-source advocates to come together, share knowledge, and celebrate the essence of open-source culture.\n\nThis event is not just a celebration but a movement to empower individuals to explore, learn, and make meaningful contributions to open-source projects. Whether you are a seasoned programmer or a curious beginner, HacktoNight welcomes you to be part of this vibrant and inclusive community, marking another milestone in the journey of open-source innovation.`;

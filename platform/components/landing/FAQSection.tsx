@@ -5,7 +5,7 @@ import { FaAngleDoubleDown } from "react-icons/fa";
 
 import { cn } from "@/lib/utils";
 import Title from "@/components/common/Title";
-import Section from "@/components/landing/Section";
+import Section from "@/components/common/Section";
 
 const faqItems = [
     {

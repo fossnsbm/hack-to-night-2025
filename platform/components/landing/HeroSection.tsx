@@ -1,24 +1,24 @@
 'use client';
 
 import Countdown from "@/components/landing/Countdown";
-import Section from "@/components/landing/Section";
-import { useContest, ContestState } from '@/contexts/ContestContext';
+import Section from "@/components/common/Section";
+import { 
+  useIsContestStarted, 
+  useIsContestNotStarted 
+} from '@/contexts/ContestContext';
+import { getButtonClasses } from '@/lib/ui-utils';
 
 export default function HeroSection() {
-    const { contestState } = useContest();
-
-    // More explicit state handling
-    const isStarted = contestState === ContestState.STARTED;
-    const isNotStarted = contestState === ContestState.NOT_STARTED;
+    const isStarted = useIsContestStarted();
+    const isNotStarted = useIsContestNotStarted();
     
     // Determine button text based on contest state
     const buttonText = isStarted ? 'Login' : 'Register';
     
-    // Determine button styling and behavior
+    // Determine button styling and behavior using standardized UI utility
     const isDisabled = isNotStarted;
-    const buttonClasses = `p-4 bg-[#0f2537] shadow-[3px_3px_0px_#98c2e1] active:shadow-none active:translate-y-[2px] rounded transition ${
-        isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#133553] active:shadow-none'
-    }`;
+    const buttonClasses = getButtonClasses('primary', 'md', false) + 
+        (isDisabled ? ' opacity-50 cursor-not-allowed' : '');
 
     return (
         <Section id="hero">
