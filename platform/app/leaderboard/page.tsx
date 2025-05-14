@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getLeaderboard } from '@/actions/teams';
-import { useDataUpdates, DataProvider } from '@/components/DataProvider';
+import { useDataUpdates, DataProvider } from '@/components/providers/DataProvider';
 import Section from '@/components/common/Section';
 
 // Define types for our components

@@ -1,0 +1,7 @@
+{
+  "title": "Ancient Encryption",
+  "description": "We intercepted a message from the enemy, but it's encrypted. Our analysts believe it's using a very old encryption method. Can you decrypt it and find the flag?",
+  "category": "crypto",
+  "points": 50,
+  "flag": "flag{caesar_cipher_the_ancient_protector}"
+} 

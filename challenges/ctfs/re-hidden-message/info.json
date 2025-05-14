@@ -1,0 +1,7 @@
+{
+  "title": "Hidden Message",
+  "description": "There's a secret message hidden in this binary. Can you find it?",
+  "category": "Reverse Engineering",
+  "points": 100,
+  "flag": "flag{xor_makes_hidden_in_plain_sight}"
+} 

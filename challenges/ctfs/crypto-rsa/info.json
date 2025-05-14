@@ -1,0 +1,7 @@
+{
+  "title": "Weak RSA",
+  "description": "We found this RSA encryption system with the encrypted flag, but something seems off about the parameters. Can you break the encryption and recover the flag?",
+  "category": "crypto",
+  "points": 200,
+  "flag": "flag{sm4ll_pr1m3s}"
+} 

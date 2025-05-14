@@ -1,0 +1,7 @@
+{
+  "title": "Encrypted Communication",
+  "description": "We intercepted this program that encrypts messages with a custom algorithm. Can you reverse engineer the algorithm to decrypt the flag?",
+  "category": "Reverse Engineering",
+  "points": 250,
+  "flag": "flag{custom_encryption_algorithms_are_fun_to_reverse}"
+} 

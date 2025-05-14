@@ -1,0 +1,7 @@
+{
+  "title": "Simple Password",
+  "description": "This program requires a password to show the flag. Can you figure out what it is?",
+  "category": "Reverse Engineering",
+  "points": 150,
+  "flag": "flag{simple_static_password_analysis}"
+} 

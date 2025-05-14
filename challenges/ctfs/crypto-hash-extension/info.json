@@ -1,0 +1,7 @@
+{
+  "title": "Extended Access",
+  "description": "We've discovered a message authentication system that uses HMAC-SHA1 to verify message integrity. The admin panel seems to be protected, but there might be a weakness in the implementation. Can you find a way to access the flag?",
+  "category": "crypto",
+  "points": 400,
+  "flag": "flag{h4sh_3xt3ns10n_4tt4ck_f0r_th3_w1n}"
+} 

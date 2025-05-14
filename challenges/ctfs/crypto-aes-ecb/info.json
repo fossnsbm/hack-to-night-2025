@@ -1,0 +1,7 @@
+{
+  "title": "Oracle's Weakness",
+  "description": "We've gained access to a secure flag encryption service. The flag is encrypted using AES-ECB mode and we can also encrypt our own data, but the service won't let us directly encrypt the flag. Can you extract the flag by exploiting the encryption oracle?",
+  "category": "crypto",
+  "points": 350,
+  "flag": "flag{ECB_m0d3_l34k5_d4t4_bl0ck_by_bl0ck}"
+} 

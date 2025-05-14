@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  challenge:
+    build: .
+    ports:
+      - "9005:9005"
+    restart: unless-stopped
+    container_name: crypto-aes-ecb 
