@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "8084:3000"
+    environment:
+      - NODE_ENV=production
+      - FLAG=flag{pr0t0typ3_p0llut10n_l34ds_t0_rce}
+    restart: unless-stopped 

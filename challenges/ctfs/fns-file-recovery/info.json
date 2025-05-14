@@ -1,0 +1,7 @@
+{
+  "title": "Digital Detective: File Recovery",
+  "description": "A junior sysadmin accidentally deleted an important text file containing credentials. We managed to get a disk image before any further writes occurred. Can you recover the deleted file and find the flag?",
+  "category": "Forensics",
+  "points": 100,
+  "flag": "flag{f0r3ns1cs_r3c0v3ry_m4st3r}"
+} 

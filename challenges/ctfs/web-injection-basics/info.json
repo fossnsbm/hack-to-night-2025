@@ -1,0 +1,7 @@
+{
+  "title": "Injection Basics",
+  "description": "We need to access some data from a company's employee database. There's a simple search portal that lets you look up employees by ID. Can you find a way to extract information that you're not supposed to see?",
+  "category": "Web",
+  "points": 75,
+  "flag": "flag{sql_1nj3ct10n_101}"
+} 

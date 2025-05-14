@@ -1,0 +1,7 @@
+{
+  "title": "Social Sleuth",
+  "description": "A suspicious user with the handle 'cyberhawk42' has been posting sensitive information online. Find their full name, location, and the secret message they've hidden across their social media accounts.",
+  "category": "OSINT",
+  "points": 100,
+  "flag": "flag{j0hn_sm1th_n3w_y0rk_h1dd3n_1n_pl41n_s1ght}"
+} 

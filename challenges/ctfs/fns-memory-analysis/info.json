@@ -1,0 +1,7 @@
+{
+  "title": "Memory Lane",
+  "description": "A system was compromised, and we've taken a memory dump before shutting it down. We suspect the attacker was running a malicious process and may have left behind traces of their activity. Can you analyze the memory dump and find the hidden message?",
+  "category": "Forensics",
+  "points": 250,
+  "flag": "flag{v0l4t1l1ty_4n4lys1s_f0r_th3_w1n}"
+} 

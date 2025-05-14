@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "8082:3000"
+    environment:
+      - JWT_SECRET=supersecretkey123
+    restart: unless-stopped 

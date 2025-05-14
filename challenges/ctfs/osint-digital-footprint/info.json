@@ -1,0 +1,7 @@
+{
+  "title": "Digital Footprint",
+  "description": "Our company received an anonymous email from someone claiming to have found a security vulnerability. The only clue is that they attached this image. Can you identify who sent it and what they discovered?",
+  "category": "OSINT",
+  "points": 150,
+  "flag": "flag{m3t4d4t4_n3v3r_l13s_c4m3r4_m0d3l_GP5}"
+} 

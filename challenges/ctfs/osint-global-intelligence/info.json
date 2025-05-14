@@ -1,0 +1,7 @@
+{
+  "title": "Global Intelligence Network",
+  "description": "We've intercepted communications about a planned cyber attack on critical infrastructure. The attack is being coordinated by an advanced threat group using multiple encrypted channels. Use OSINT techniques to identify the target, timeline, and attack method before it's too late.",
+  "category": "OSINT",
+  "points": 400,
+  "flag": "flag{p0w3r_gr1d_r4ns0mw4r3_jun3_15th_v14_ph1sh1ng}"
+} 

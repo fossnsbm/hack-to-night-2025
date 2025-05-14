@@ -1,0 +1,7 @@
+{
+  "title": "Internal Proxy",
+  "description": "We found a web proxy service that claims to fetch any public website for you. But we suspect it might have access to some internal services as well. Can you find a way to access resources that aren't supposed to be public?",
+  "category": "Web",
+  "points": 250,
+  "flag": "flag{ssrf_1nt3rn4l_s3rv1c3_3xp0sur3}"
+} 

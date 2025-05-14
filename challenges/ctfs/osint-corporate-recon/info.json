@@ -1,0 +1,7 @@
+{
+  "title": "Corporate Reconnaissance",
+  "description": "As part of a security audit, you need to gather information about TechnoCore Industries without directly interacting with their systems. Find their exposed API keys, employee information, and a critical vulnerability in their infrastructure.",
+  "category": "OSINT",
+  "points": 250,
+  "flag": "flag{3xp0s3d_g1thub_c0mm1ts_4nd_cl0ud_4ss3ts}"
+} 

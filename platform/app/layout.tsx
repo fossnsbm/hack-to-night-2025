@@ -1,11 +1,11 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Silkscreen } from "next/font/google";
-import Header from "@/components/common/Header";
-import Footer from "@/components/common/Footer";
 import BackgroundCanvas from "@/components/common/BackgroundCanvas";
+import Footer from "@/components/common/Footer";
+import Header from "@/components/common/Header";
 import { ContestProvider } from "@/contexts/ContestContext";
 import { TeamProvider } from "@/contexts/TeamContext";
+import type { Metadata } from "next";
+import { Silkscreen } from "next/font/google";
+import "./globals.css";
 
 const silkscreen = Silkscreen({
   subsets: ["latin"],

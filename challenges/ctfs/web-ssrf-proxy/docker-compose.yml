@@ -1,0 +1,16 @@
+version: '3'
+services:
+  proxy:
+    build: .
+    ports:
+      - "8083:3000"
+    restart: unless-stopped
+  
+  internal-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile.internal
+    environment:
+      - FLAG=flag{ssrf_1nt3rn4l_s3rv1c3_3xp0sur3}
+    restart: unless-stopped
+    # No ports exposed - only accessible via internal network 
