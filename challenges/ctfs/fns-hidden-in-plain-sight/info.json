@@ -1,7 +1,0 @@
-{
-  "title": "Hidden in Plain Sight",
-  "description": "Our security team intercepted an image that we believe contains hidden information. The image looks normal, but we suspect there's more than meets the eye. Can you extract the hidden data?",
-  "category": "Forensics",
-  "points": 75,
-  "flag": "flag{m3t4d4t4_n3v3r_l13s}"
-} 

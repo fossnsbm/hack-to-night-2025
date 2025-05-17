@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  challenge:
-    build: .
-    ports:
-      - "9004:9004"
-    restart: unless-stopped
-    container_name: crypto-rsa 

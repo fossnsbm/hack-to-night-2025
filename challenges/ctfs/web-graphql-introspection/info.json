@@ -1,7 +1,0 @@
-{
-  "title": "GraphQL Unveiled",
-  "description": "We discovered a modern API using GraphQL for a company's product catalog. The public API seems limited, but there might be hidden functionality. Explore the API and find sensitive data that shouldn't be exposed.",
-  "category": "Web",
-  "points": 400,
-  "flag": "flag{1ntr0sp3ct10n_r3v34ls_4ll_s3cr3ts}"
-} 

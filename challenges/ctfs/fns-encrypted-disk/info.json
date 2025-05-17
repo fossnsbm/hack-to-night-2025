@@ -1,7 +1,0 @@
-{
-  "title": "Locked Away",
-  "description": "An employee of our company was suspected of leaking sensitive information. Before we could secure their laptop, they encrypted the disk. We've obtained a memory dump taken while the encrypted disk was still mounted. Can you recover the encryption key and access the hidden data?",
-  "category": "Forensics",
-  "points": 400,
-  "flag": "flag{m3m0ry_n3v3r_f0rg3ts_th3_k3ys}"
-} 

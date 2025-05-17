@@ -1,7 +1,0 @@
-{
-  "title": "Domain Detective",
-  "description": "We're investigating a suspected phishing campaign targeting our organization. We have identified a suspicious domain 'securityupdate-portal.com' that appears to be impersonating our company. Discover who registered this domain, when it was created, and what infrastructure it's using.",
-  "category": "OSINT",
-  "points": 300,
-  "flag": "flag{wh01s_h1st0ry_dns_r3c0rds_r3v34l_4ll}"
-} 

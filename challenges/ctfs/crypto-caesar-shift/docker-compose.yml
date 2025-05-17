@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  challenge:
-    build: .
-    ports:
-      - "9001:9001"
-    restart: unless-stopped
-    container_name: crypto-caesar-shift 

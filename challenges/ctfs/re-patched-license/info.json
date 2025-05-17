@@ -1,7 +1,0 @@
-{
-  "title": "Patched License",
-  "description": "We've obtained a commercial software license validator. Can you bypass its protection and generate a valid license key to get the flag?",
-  "category": "Reverse Engineering",
-  "points": 300,
-  "flag": "flag{anti_debugging_license_cracker_pwned_skid}"
-} 

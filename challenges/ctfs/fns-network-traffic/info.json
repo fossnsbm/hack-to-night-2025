@@ -1,7 +1,0 @@
-{
-  "title": "Suspicious Traffic",
-  "description": "Our network monitoring system detected unusual traffic from one of our workstations. We've captured a packet capture (PCAP) file during the suspicious activity. Can you analyze the traffic and determine what sensitive data was exfiltrated?",
-  "category": "Forensics",
-  "points": 200,
-  "flag": "flag{DNS_3xf1ltr4t10n_1s_cl3v3r}"
-} 

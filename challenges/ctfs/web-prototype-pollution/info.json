@@ -1,7 +1,0 @@
-{
-  "title": "Object Inspector",
-  "description": "We're testing a new Node.js application for managing configuration settings. It allows you to view and modify your profile settings, but admin features are disabled for regular users. Can you find a way to access the admin functionality?",
-  "category": "Web",
-  "points": 350,
-  "flag": "flag{pr0t0typ3_p0llut10n_l34ds_t0_rce}"
-} 

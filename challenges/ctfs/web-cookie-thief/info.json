@@ -1,7 +1,0 @@
-{
-  "title": "Cookie Thief",
-  "description": "We've found a simple login page for a company's internal portal. The admin credentials are supposedly stored in the cookies, but we can't seem to access them directly. Can you find a way to steal the admin cookie and gain access?",
-  "category": "Web",
-  "points": 100,
-  "flag": "flag{c00k13_th3ft_1s_t00_3asy}"
-} 

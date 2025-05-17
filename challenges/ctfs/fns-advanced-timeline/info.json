@@ -1,7 +1,0 @@
-{
-  "title": "Digital Crime Scene",
-  "description": "We're investigating a sophisticated cyber attack that successfully exfiltrated confidential data from our network. We've collected disk images and logs from affected systems. Your task is to analyze the artifacts and build a complete timeline of the attack, including initial access, lateral movement, and data exfiltration methods. The flag is hidden within the exfiltrated data package.",
-  "category": "Forensics",
-  "points": 450,
-  "flag": "flag{f0r3ns1c_t1m3l1n3_r3c0nstruct10n_FTW}"
-} 

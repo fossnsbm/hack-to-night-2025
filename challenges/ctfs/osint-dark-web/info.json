@@ -1,7 +1,0 @@
-{
-  "title": "Dark Web Investigator",
-  "description": "A major data breach has occurred, and we've received intelligence that the stolen data is being sold on dark web marketplaces. Your mission is to trace the seller known as 'PhantomByte', identify their real identity, locate the stolen data, and determine who's behind the original breach.",
-  "category": "OSINT",
-  "points": 450,
-  "flag": "flag{d4rk_w3b_cr3d3nt14ls_tr4c3d_t0_1ns1d3r_thr34t}"
-} 

@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  challenge:
-    build: .
-    ports:
-      - "9006:9006"
-    restart: unless-stopped
-    container_name: crypto-hash-extension 

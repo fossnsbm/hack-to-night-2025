@@ -1,7 +1,0 @@
-version: '3'
-services:
-  cookie-thief:
-    build: .
-    ports:
-      - "8080:80"
-    restart: unless-stopped 

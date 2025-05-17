@@ -1,7 +1,0 @@
-{
-  "title": "Polyalphabetic Mystery",
-  "description": "We've intercepted an enemy message that appears to be encrypted with a polyalphabetic cipher. A scrap of paper with the word 'CRYPTO' was found nearby. Can you decrypt the message and find the flag?",
-  "category": "crypto",
-  "points": 150,
-  "flag": "flag{vigenere_ciphers_was_invented_in_1553}"
-} 

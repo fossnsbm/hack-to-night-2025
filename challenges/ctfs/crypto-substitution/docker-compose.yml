@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  challenge:
-    build: .
-    ports:
-      - "9002:9002"
-    restart: unless-stopped
-    container_name: crypto-substitution 

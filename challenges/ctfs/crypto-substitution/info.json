@@ -1,7 +1,0 @@
-{
-  "title": "Letter Swap",
-  "description": "We intercepted this encrypted message from a rival organization. Our intelligence suggests they're using a simple substitution cipher. Can you break the code and reveal the hidden flag?",
-  "category": "crypto",
-  "points": 100,
-  "flag": "flag{cryptography_is_connecting_the_dots}"
-} 
