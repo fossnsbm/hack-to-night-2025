@@ -1,0 +1,22 @@
+name: Build ARM JSON from Bicep
+
+
+on: 
+  push:
+    branches:
+      - main
+    
+jobs:
+  build-bicep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Bicep Build
+        uses: Azure/bicep-build-action@v1.0.0
+        with:
+          bicepFilePath: ctfd.bicep
+          outputFilePath: azuredeploy.json
+      - uses: stefanzweifel/git-auto-commit-action@v5
