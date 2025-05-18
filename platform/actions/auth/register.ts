@@ -51,36 +51,18 @@ export async function register(data: RegisterTeamInput) {
       }
     }
 
-    // Collect all member names to store in the team document
-    const memberNames = data.members
-      .filter(member => member.name && member.email)
-      .map(member => member.name);
-      
-    // Add leader to the members array
-    memberNames.unshift(data.leaderName);
-
-    // Hash the password using argon2id
+    // Hash the password using bcrypt
     const hashedPassword = await hashPassword(data.password);
 
-    // Create team with hashed password
-    const teamData = {
-      name: data.teamName,
-      leader: data.leaderName,
-      password: hashedPassword,
-      members: memberNames,
-      createdAt: new Date()
-    };
-    
-    const teamRef = await teamsRef.add(teamData);
-    const teamId = teamRef.id;
-
-    // Create team leader as a member
-    await membersRef.add({
+    // First create the leader's member document
+    const leaderDoc = await membersRef.add({
       name: data.leaderName,
-      email: data.email
+      email: data.email,
+      isLeader: true
     });
 
-    // Insert other team members
+    // Create member documents for other team members
+    const memberDocs = [];
     if (data.members && data.members.length > 0) {
       const otherMembers = data.members.filter(member => 
         member.email && member.name && member.email !== data.email
@@ -89,19 +71,32 @@ export async function register(data: RegisterTeamInput) {
       if (otherMembers.length > 0) {
         const batch = db.batch();
         
-        otherMembers.forEach(member => {
+        for (const member of otherMembers) {
           const memberRef = membersRef.doc();
           batch.set(memberRef, {
             name: member.name,
-            email: member.email
+            email: member.email,
+            isLeader: false
           });
-        });
+          memberDocs.push(memberRef);
+        }
         
         await batch.commit();
       }
     }
 
-    return { success: true, teamId: teamId };
+    // Create team with all member references
+    const teamData = {
+      name: data.teamName,
+      leader: leaderDoc.id, // Store leader's document ID
+      password: hashedPassword,
+      members: [leaderDoc.id, ...memberDocs.map(doc => doc.id)], // Store all member document IDs
+      createdAt: new Date()
+    };
+    
+    const teamRef = await teamsRef.add(teamData);
+
+    return { success: true, teamId: teamRef.id };
   } catch (error) {
     console.error("Registration error:", error);
     return { success: false, error: "Failed to register team" };
