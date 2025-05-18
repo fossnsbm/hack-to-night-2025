@@ -246,11 +246,8 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
       } else {
         setError(result.error || 'Registration failed. Please try again.');
         
-        // Check if the error is about an existing email and highlight the relevant field
-        if (result.error?.includes("Email already registered") && result.error?.includes(members[0].email)) {
-          // Highlight leader's email by focusing on the first slide
-          setActiveSlide(0);
-        } else if (result.error?.includes("Email") && result.error?.includes("is already registered")) {
+        // Check if the error is about an existing email
+        if (result.error?.includes("Email") && result.error?.includes("is already registered")) {
           // Try to find which member email is causing the issue
           const emailInError = result.error.match(/Email\s+([^\s]+)\s+is already registered/);
           if (emailInError && emailInError[1]) {

@@ -48,7 +48,7 @@ export async function register(data: RegisterTeamInput) {
     const leaderSnapshot = await membersRef.where('email', '==', data.email).limit(1).get();
 
     if (!leaderSnapshot.empty) {
-      return { success: false, error: "Email already registered" };
+      return { success: false, error: `Email ${data.email} is already registered` };
     }
 
     // Check if any team member emails are already registered
