@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-import Section from "@/components/landing/Section";
+import Section from "@/components/common/Section";
 import Title from "@/components/common/Title";
 
 export default function MemoriesSection() {
