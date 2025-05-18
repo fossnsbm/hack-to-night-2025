@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getChallenges } from "@/actions/challenges/getChallenges";
 import Link from "next/link";
 import { useTeam } from "@/components/contexts/TeamContext";
 import { useRouter } from "next/navigation";
@@ -12,9 +11,10 @@ import {
   getButtonClasses, 
   getCardClasses, 
   getAlertClasses 
-} from "@/lib/ui-utils";
+} from "@/lib/utils";
+import { getChallenges } from "@/lib/mockData";
 
-// SWR fetcher function
+
 const fetcher = async () => {
   const result = await getChallenges();
   if (!result.success) {
@@ -28,16 +28,16 @@ export default function Challenges() {
   const isContestStarted = useIsContestStarted();
   const router = useRouter();
   
-  // Use SWR for data fetching with automatic caching
+  
   const { data, error, isLoading: isLoadingChallenges, mutate } = useSWR(
-    // Only fetch if authenticated and contest started
+    
     isAuthenticated && isContestStarted && !isLoading ? 'challenges' : null,
     fetcher,
     {
-      revalidateOnFocus: false, // Don't revalidate when window regains focus
-      revalidateOnReconnect: true, // Revalidate when browser regains connection
-      refreshInterval: 30000, // Refresh every 30 seconds
-      dedupingInterval: 5000, // Deduplicate requests within 5 seconds
+      revalidateOnFocus: false, 
+      revalidateOnReconnect: true, 
+      refreshInterval: 30000, 
+      dedupingInterval: 5000, 
     }
   );
   
@@ -45,9 +45,9 @@ export default function Challenges() {
   const categories = data?.categories || [];
 
   useEffect(() => {
-    // Only redirect if we've finished loading auth state
+    
     if (!isLoading) {
-      // Check both conditions: user needs to be authenticated AND contest must have started
+      
       if (!isAuthenticated) {
         console.log("Not authenticated, redirecting to home");
         router.push("/");
@@ -112,7 +112,7 @@ export default function Challenges() {
             </div>
           ) : (
             <div className="space-y-12 pb-8">
-              {categories.map((category) => (
+              {categories.map((category: string) => (
                 <div key={category} className="space-y-4">
                   <h2 className="text-2xl font-semibold text-white mb-4 pb-2 border-b border-gray-700">
                     {category}

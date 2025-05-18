@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getChallenge } from "@/actions/challenges/getChallenge";
-import { submitFlag } from "@/actions/challenges/submitFlag";
+import { mockSubmitFlag, mockGetChallenge } from "@/lib/mockData";
 import { useTeam } from "@/components/contexts/TeamContext";
 import { useRouter } from "next/navigation";
 import { useIsContestStarted } from "@/components/contexts/ContestContext";
@@ -13,10 +12,10 @@ import {
   getInputClasses, 
   getCardClasses, 
   getAlertClasses 
-} from "@/lib/ui-utils";
+} from "@/lib/utils";
+import { notFound } from 'next/navigation';
 
-// Define challenge type
-type Challenge = {
+type ChallengeType = {
   id: number;
   title: string;
   description: string;
@@ -34,24 +33,15 @@ type Challenge = {
   createdAt: Date;
 };
 
-// SWR fetcher function
-const challengeFetcher = async (challengeId: number) => {
-  const result = await getChallenge(challengeId);
-  if (!result.success) {
-    throw new Error(result.error || "Failed to load challenge");
-  }
-  return result;
-};
+interface ChallengeInteractiveContentProps {
+  initialChallengeData: {
+    challenge?: ChallengeType;
+    error?: string;
+  };
+  challengeId: number;
+}
 
-export default function Challenge({ params }: { params: { id: string } }) {
-  // Unwrap params with React.use() before accessing properties
-  // Cast the result to the expected type
-  const unwrappedParams = React.use(params as any) as { id: string };
-  const id = unwrappedParams.id;
-  
-  // Parse the ID once
-  const challengeId = parseInt(id);
-  
+function ChallengeInteractiveContent({ initialChallengeData, challengeId }: ChallengeInteractiveContentProps) {
   const [flag, setFlag] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submission, setSubmission] = useState<{
@@ -59,113 +49,89 @@ export default function Challenge({ params }: { params: { id: string } }) {
     message: string;
   } | null>(null);
   
-  const { isAuthenticated, isLoading } = useTeam();
+  const { isAuthenticated, isLoading: isLoadingTeam } = useTeam();
   const isContestStarted = useIsContestStarted();
   const router = useRouter();
 
-  // Use SWR for data fetching with automatic caching
-  const { data, error, isLoading: isLoadingChallenge, mutate } = useSWR(
-    // Only fetch if authenticated and contest started and ID is valid
-    isAuthenticated && isContestStarted && !isLoading && !isNaN(challengeId) 
-      ? `challenge-${challengeId}` 
-      : null,
-    () => challengeFetcher(challengeId),
+  const swrKey = isAuthenticated && isContestStarted && !isLoadingTeam && !isNaN(challengeId) 
+                 ? `challenge-${challengeId}` 
+                 : null;
+
+  const { data, error: swrError, isLoading: isLoadingSWRChallenge, mutate } = useSWR(
+    swrKey,
+    (key) => (!initialChallengeData.challenge && key) ? mockGetChallenge(challengeId).then(res => res) : Promise.resolve({ challenge: initialChallengeData.challenge, success: true }),
     {
+      fallbackData: initialChallengeData.challenge ? { challenge: initialChallengeData.challenge, success: true } : undefined,
       revalidateOnFocus: false,
       revalidateOnReconnect: true,
-      refreshInterval: 60000, // Refresh every 60 seconds
-      dedupingInterval: 5000, // Deduplicate requests within 5 seconds
+      refreshInterval: 60000, 
+      dedupingInterval: 5000,
     }
   );
 
-  const challenge = data?.challenge as Challenge | undefined;
+  const currentChallengeResult = data || (initialChallengeData.challenge ? { challenge: initialChallengeData.challenge, success: true } : { error: initialChallengeData.error, success: false });
+  const challengeToDisplay = currentChallengeResult?.challenge as ChallengeType | undefined;
+  const displayError = currentChallengeResult?.error || swrError?.message || initialChallengeData.error;
+  
+  const isLoadingPage = isLoadingTeam || (!challengeToDisplay && !displayError && isLoadingSWRChallenge);
 
   useEffect(() => {
-    // Only process after auth state has loaded
-    if (!isLoading) {
-      // Check both conditions: user needs to be authenticated AND contest must have started
+    if (!isLoadingTeam) {
       if (!isAuthenticated) {
         console.log("Not authenticated, redirecting to home");
         router.push("/");
         return;
       }
-
       if (!isContestStarted) {
         console.log("Contest not started, redirecting to home");
         router.push("/");
         return;
       }
-
-      // Check if ID is valid
-      if (isNaN(challengeId)) {
-        console.error("Invalid challenge ID");
-        return;
-      }
     }
-  }, [isAuthenticated, isContestStarted, isLoading, router, challengeId]);
+  }, [isAuthenticated, isContestStarted, isLoadingTeam, router, challengeId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
     if (!flag.trim()) {
-      setSubmission({
-        status: "error",
-        message: "Please enter a flag"
-      });
+      setSubmission({ status: "error", message: "Please enter a flag" });
       return;
     }
     
+    setSubmitting(true);
+    setSubmission(null);
+    
     try {
-      setSubmitting(true);
-      setSubmission(null);
-      
-      const result = await submitFlag({
-        challengeId,
-        flag
-      });
-      
+      const result = await mockSubmitFlag({ challengeId, flag });
       if (result.success) {
         setSubmission({
           status: "success",
           message: result.message || `Correct! You earned ${result.points} points.`
         });
-        
-        // Update the challenge's solved status locally through SWR
         mutate(
-          (current: any) => ({
-            ...current,
-            challenge: { ...current.challenge, isSolved: true }
-          }),
-          false // Don't revalidate immediately
+          async (currentSWRData: any) => {
+            const updatedChallenge = { ... (currentSWRData?.challenge || challengeToDisplay), isSolved: true };
+            return { ...currentSWRData, challenge: updatedChallenge, success: true};
+          }, 
+          false
         );
-        
-        // Clear the flag input
         setFlag("");
-        
-        // Go back to challenges to refresh the list
         setTimeout(() => {
           router.push("/challenges");
         }, 3000);
       } else {
-        setSubmission({
-          status: "error",
-          message: result.error || "Incorrect flag"
-        });
+        setSubmission({ status: "error", message: result.error || "Incorrect flag" });
       }
-    } catch (err) {
-      setSubmission({
-        status: "error",
-        message: "An error occurred while submitting your flag"
-      });
+    } catch (err: any) {
+      setSubmission({ status: "error", message: err.message || "An error occurred while submitting your flag" });
       console.error(err);
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (isLoading || isLoadingChallenge) {
+  if (isLoadingPage) {
     return (
-      <Section id="challenge-details">
+      <Section id="challenge-details-loading">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
@@ -175,18 +141,15 @@ export default function Challenge({ params }: { params: { id: string } }) {
     );
   }
 
-  if (error || !challenge) {
+  if (displayError || !challengeToDisplay) {
     return (
-      <Section id="challenge-details">
+      <Section id="challenge-details-error">
         <div className="max-w-4xl mx-auto">
           <div className={getAlertClasses('error')}>
-            <p>{error?.message || "Challenge not found"}</p>
+            <p>{displayError || "Challenge data is unavailable."}</p>
           </div>
           <div className="mt-6">
-            <button
-              onClick={() => router.push("/challenges")}
-              className={getButtonClasses('secondary')}
-            >
+            <button onClick={() => router.push("/challenges")} className={getButtonClasses('secondary')}>
               Back to Challenges
             </button>
           </div>
@@ -194,16 +157,14 @@ export default function Challenge({ params }: { params: { id: string } }) {
       </Section>
     );
   }
+  
+  const challenge = challengeToDisplay;
 
   return (
     <Section id="challenge-details">
       <div className="max-w-4xl mx-auto overflow-y-auto h-full">
-        {/* Back button */}
         <div className="mb-6">
-          <button
-            onClick={() => router.push("/challenges")}
-            className={getButtonClasses('outline', 'sm')}
-          >
+          <button onClick={() => router.push("/challenges")} className={getButtonClasses('outline', 'sm')}>
             <span className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -213,7 +174,6 @@ export default function Challenge({ params }: { params: { id: string } }) {
           </button>
         </div>
         
-        {/* Challenge Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -246,7 +206,6 @@ export default function Challenge({ params }: { params: { id: string } }) {
           </div>
         </div>
         
-        {/* Challenge Content */}
         <div className={getCardClasses('default', 'lg') + ' mb-8'}>
           <div className="prose prose-invert max-w-none">
             <p className="text-gray-300 whitespace-pre-line">{challenge.description}</p>
@@ -266,11 +225,9 @@ export default function Challenge({ params }: { params: { id: string } }) {
           )}
         </div>
         
-        {/* Flag submission */}
         {!challenge.isSolved ? (
           <div className={getCardClasses('default', 'lg') + ' mb-6'}>
             <h2 className="text-xl font-semibold text-white mb-4">Submit Flag</h2>
-            
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col md:flex-row gap-4">
                 <input
@@ -284,12 +241,11 @@ export default function Challenge({ params }: { params: { id: string } }) {
                 <button
                   type="submit"
                   className={getButtonClasses('primary', 'lg')}
-                  disabled={submitting}
+                  disabled={submitting || isLoadingPage}
                 >
                   {submitting ? "Submitting..." : "Submit Flag"}
                 </button>
               </div>
-              
               {submission && (
                 <div className={`mt-4 ${getAlertClasses(submission.status === "success" ? "success" : "error")}`}>
                   {submission.message}
@@ -308,15 +264,15 @@ export default function Challenge({ params }: { params: { id: string } }) {
           </div>
         )}
         
-        {/* Other team solves */}
         <div className={getCardClasses('default', 'lg')}>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">Solves</h2>
             <button
               onClick={() => mutate()}
               className={getButtonClasses('secondary', 'sm')}
+              disabled={isLoadingSWRChallenge}
             >
-              Refresh
+              {isLoadingSWRChallenge ? 'Refreshing...' : 'Refresh Solves'}
             </button>
           </div>
           <p className="text-gray-400">
@@ -327,3 +283,35 @@ export default function Challenge({ params }: { params: { id: string } }) {
     </Section>
   );
 }
+interface ChallengePageProps {
+  params: { id: string };
+}
+
+export default async function ChallengePage({ params }: ChallengePageProps) {
+  const id = params.id;
+  const challengeId = parseInt(id, 10);
+
+  let initialDataPayload: ChallengeInteractiveContentProps['initialChallengeData'] = {};
+
+  if (isNaN(challengeId)) {
+    notFound();
+  }
+
+  try {
+    const result = await mockGetChallenge(challengeId);
+    if (result.success && result.challenge) {
+      initialDataPayload = { challenge: result.challenge as ChallengeType };
+    } else {
+      if (result.error && result.error.toLowerCase().includes('not found')) {
+        notFound();
+      }
+      initialDataPayload = { error: result.error || "Failed to load challenge from server." };
+    }
+  } catch (err: any) {
+    console.error("Server-side error fetching challenge:", err);
+    initialDataPayload = { error: "An unexpected server error occurred." };
+  }
+  
+  return <ChallengeInteractiveContent initialChallengeData={initialDataPayload} challengeId={challengeId} />;
+}
+

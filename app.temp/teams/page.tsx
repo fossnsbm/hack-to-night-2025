@@ -21,7 +21,7 @@ export default function TeamsPage() {
 
   const fetchUserData = async () => {
     try {
-      // Get current user
+      
       const userResponse = await fetch('/api/auth/me');
       const userData = await userResponse.json();
 
@@ -32,7 +32,7 @@ export default function TeamsPage() {
 
       setUser(userData.user);
 
-      // If user has a team, get team data
+      
       if (userData.user.teamId) {
         const teamResponse = await fetch(`/api/teams/${userData.user.teamId}`);
         const teamData = await teamResponse.json();
@@ -53,7 +53,7 @@ export default function TeamsPage() {
     setError(null);
     setSuccess(null);
 
-    // Validate team name
+    
     if (!teamName.trim()) {
       setError('Team name is required');
       return;
@@ -82,7 +82,7 @@ export default function TeamsPage() {
       if (response.ok) {
         setSuccess('Team created successfully!');
         setUserTeam(data.team);
-        // Refresh user data to update teamId
+        
         fetchUserData();
       } else {
         setError(data.message || 'Failed to create team');

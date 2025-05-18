@@ -42,6 +42,37 @@ export type UpdateTeamResult = {
   error?: string;
 };
 
+export type Challenge = {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  points: number;
+  hint?: string;
+  isSolved: boolean;
+  solves: {
+    id: number;
+    teamId: number;
+    challengeId: number;
+    solvedAt: Date;
+  }[];
+  createdAt: Date;
+};
+
+export type ChallengeResult = {
+  success: boolean;
+  error?: string;
+  challenge?: Challenge;
+};
+
+export type FlagSubmissionResult = {
+  success: boolean;
+  error?: string;
+  message?: string;
+  points?: number;
+};
+
 export async function mockLogin(data: { email: string; password: string }): Promise<LoginResult> {
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -153,4 +184,93 @@ export async function mockUpdateTeam(data: {
 }): Promise<UpdateTeamResult> {
   await new Promise(resolve => setTimeout(resolve, 500));
   return { success: true };
+}
+
+export async function mockGetChallenge(challengeId: number): Promise<ChallengeResult> {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  
+  return {
+    success: true,
+    challenge: {
+      id: challengeId,
+      title: `Challenge ${challengeId}`,
+      description: "This is a mock challenge description for testing purposes.",
+      category: "Web",
+      difficulty: "Medium",
+      points: 200,
+      hint: "This is a hint for the challenge",
+      isSolved: false,
+      solves: [],
+      createdAt: new Date()
+    }
+  };
+}
+
+export async function mockSubmitFlag(data: { challengeId: number; flag: string }): Promise<FlagSubmissionResult> {
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  
+  if (data.flag.startsWith("flag{")) {
+    return {
+      success: true,
+      message: "Correct flag!",
+      points: 200
+    };
+  }
+  
+  return {
+    success: false,
+    error: "Incorrect flag, try again."
+  };
+}
+
+
+export async function getChallenge(challengeId: number): Promise<ChallengeResult> {
+  return mockGetChallenge(challengeId);
+}
+
+export async function submitFlag(data: { challengeId: number; flag: string }): Promise<FlagSubmissionResult> {
+  return mockSubmitFlag(data);
+}
+
+export async function getChallenges(): Promise<{success: boolean, challengesByCategory: Record<string, Challenge[]>, categories: string[], error?: string}> {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  const webChallenges = [
+    {
+      id: 1,
+      title: "Web Challenge 1",
+      description: "This is a mock web challenge",
+      category: "Web",
+      difficulty: "Easy",
+      points: 100,
+      isSolved: false,
+      solves: [],
+      createdAt: new Date()
+    }
+  ];
+  
+  const cryptoChallenges = [
+    {
+      id: 2,
+      title: "Crypto Challenge 1",
+      description: "This is a mock crypto challenge",
+      category: "Crypto",
+      difficulty: "Medium",
+      points: 200,
+      isSolved: false,
+      solves: [],
+      createdAt: new Date()
+    }
+  ];
+  
+  return {
+    success: true,
+    challengesByCategory: {
+      "Web": webChallenges,
+      "Crypto": cryptoChallenges
+    },
+    categories: ["Web", "Crypto"]
+  };
 } 

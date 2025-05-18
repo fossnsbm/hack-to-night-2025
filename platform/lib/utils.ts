@@ -23,14 +23,14 @@ export const getButtonClasses = (
   const baseClasses = "font-medium rounded transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 disabled:opacity-60 disabled:cursor-not-allowed";
   const widthClass = fullWidth ? "w-full" : "";
   
-  // Size variations
+  
   const sizeClasses = {
     sm: "px-3 py-1.5 text-xs",
     md: "px-4 py-2 text-sm",
     lg: "px-6 py-3 text-base",
   };
   
-  // Style variations
+  
   const variantClasses = {
     primary: "bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-400",
     secondary: "bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-500",
@@ -55,7 +55,7 @@ export const getInputClasses = (
 ) => {
   const baseClasses = "w-full rounded focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed";
   
-  // Style variations
+  
   const variantClasses = {
     default: "p-2 bg-black/50 border border-white/20 text-white focus:border-purple-500",
     dark: "p-2 bg-gray-800 border border-gray-700 text-white focus:border-purple-500",

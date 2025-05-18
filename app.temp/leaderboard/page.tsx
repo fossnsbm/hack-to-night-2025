@@ -10,7 +10,7 @@ type LeaderboardTeam = {
   createdAt: Date;
 };
 
-// Static mock data
+
 const MOCK_TEAMS: LeaderboardTeam[] = [
   {
     id: 1,

@@ -32,12 +32,12 @@ export function TeamProvider({ children }: { children: ReactNode }) {
   const [team, setTeam] = useState<Team | null>(null);
 
   async function refreshTeam() {
-    // Will be implemented when server actions are ready
+    
     return;
   }
 
   async function handleLogout() {
-    // Will be implemented when server actions are ready
+    
     setIsAuthenticated(false);
     setTeam(null);
   }

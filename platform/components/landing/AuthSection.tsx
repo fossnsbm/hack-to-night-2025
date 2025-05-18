@@ -185,7 +185,7 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
   };
 
   const validateMemberEmails = (): {valid: boolean, errorMsg?: string} => {
-    // Only validate emails that are not empty
+    
     for (let i = 0; i < members.length; i++) {
       const member = members[i];
       if (member.email && !validateEmail(member.email)) {
@@ -222,7 +222,7 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
       return;
     }
 
-    // Validate email format
+    
     const emailValidation = validateMemberEmails();
     if (!emailValidation.valid) {
       setError(emailValidation.errorMsg || 'Invalid email format');
@@ -246,9 +246,9 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
       } else {
         setError(result.error || 'Registration failed. Please try again.');
         
-        // Check if the error is about an existing email
+        
         if (result.error?.includes("Email") && result.error?.includes("is already registered")) {
-          // Try to find which member email is causing the issue
+          
           const emailInError = result.error.match(/Email\s+([^\s]+)\s+is already registered/);
           if (emailInError && emailInError[1]) {
             const problematicEmail = emailInError[1];
