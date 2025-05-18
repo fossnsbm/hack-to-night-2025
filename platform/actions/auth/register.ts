@@ -16,8 +16,25 @@ type RegisterTeamInput = {
   members: TeamMember[];
 };
 
+// Email validation function
+function isValidEmail(email: string): boolean {
+  return email.trim().toLowerCase().endsWith('@students.nsbm.ac.lk');
+}
+
 export async function register(data: RegisterTeamInput) {
   try {
+    // Validate leader email
+    if (!isValidEmail(data.email)) {
+      return { success: false, error: "Leader email must end with @students.nsbm.ac.lk" };
+    }
+
+    // Validate all member emails
+    for (const member of data.members) {
+      if (member.email && !isValidEmail(member.email)) {
+        return { success: false, error: `Email ${member.email} must end with @students.nsbm.ac.lk` };
+      }
+    }
+
     // Check if team name already exists
     const teamsRef = db.collection('teams');
     const teamSnapshot = await teamsRef.where('name', '==', data.teamName).limit(1).get();
@@ -51,7 +68,7 @@ export async function register(data: RegisterTeamInput) {
       }
     }
 
-    // Hash the password using bcrypt
+    // Hash the password using argon2
     const hashedPassword = await hashPassword(data.password);
 
     // First create the leader's member document

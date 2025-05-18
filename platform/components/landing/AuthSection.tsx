@@ -180,6 +180,24 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
     setMembers(newMembers);
   };
   
+  const validateEmail = (email: string): boolean => {
+    return email.trim().toLowerCase().endsWith('@students.nsbm.ac.lk');
+  };
+
+  const validateMemberEmails = (): {valid: boolean, errorMsg?: string} => {
+    // Only validate emails that are not empty
+    for (let i = 0; i < members.length; i++) {
+      const member = members[i];
+      if (member.email && !validateEmail(member.email)) {
+        return {
+          valid: false,
+          errorMsg: `Email for ${i === 0 ? 'Team Leader' : `Member ${i+1}`} must end with @students.nsbm.ac.lk`
+        };
+      }
+    }
+    return { valid: true };
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -201,6 +219,13 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
     
     if (!members[0].name || !members[0].email) {
       setError('Team leader information is required');
+      return;
+    }
+
+    // Validate email format
+    const emailValidation = validateMemberEmails();
+    if (!emailValidation.valid) {
+      setError(emailValidation.errorMsg || 'Invalid email format');
       return;
     }
     
@@ -277,11 +302,14 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
             id="confirmPassword" 
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className={getInputClasses('default')}
+            className={`${getInputClasses('default')} ${confirmPassword && password !== confirmPassword ? 'border-red-500 bg-red-900/20' : ''}`}
             placeholder="••••••••"
             disabled={disabled || isSubmitting}
             required
           />
+          {confirmPassword && password !== confirmPassword && (
+            <p className="mt-1 text-xs text-red-500">Passwords do not match</p>
+          )}
         </div>
         
         <div className={getFormGroupClasses('md')}>
@@ -357,13 +385,20 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
                 <label className={getLabelClasses('sm')}>Student Email</label>
                 <input 
                   type="email" 
-                  className={getInputClasses('default')}
-                  placeholder="student@university.edu"
+                  className={`${getInputClasses('default')} ${
+                    members[activeSlide].email && !validateEmail(members[activeSlide].email) 
+                      ? 'border-red-500 bg-red-900/20' 
+                      : ''
+                  }`}
+                  placeholder="student@students.nsbm.ac.lk"
                   value={members[activeSlide].email}
                   onChange={(e) => updateMember(activeSlide, 'email', e.target.value)}
                   disabled={disabled || isSubmitting}
                   required={activeSlide === 0}
                 />
+                {members[activeSlide].email && !validateEmail(members[activeSlide].email) && (
+                  <p className="mt-1 text-xs text-red-500">Email must end with @students.nsbm.ac.lk</p>
+                )}
               </div>
             </div>
           </div>
