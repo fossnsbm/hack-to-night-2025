@@ -21,16 +21,13 @@ export enum ContestState {
   STARTED = 'STARTED'
 }
 
-const REGISTRATION_START_DATE = new Date("2025-05-20T00:00:00Z+05:30");
-const CONTEST_START_DATE = new Date("2025-05-29T22:00:00Z+05:30");
-const CONTEST_DURATION_HOURS = 8;
+export const REGISTRATION_START_DATE = new Date("2025-05-19T00:00:00+05:30");
+export const CONTEST_START_DATE = new Date("2025-05-29T22:00:00+05:30");
+export const CONTEST_DURATION_HOURS = 8;
 
 // Contest context type
 type ContestContextType = {
   contestState: ContestState;
-  startDate: Date;
-  registrationDate: Date;
-  duration: number; // in hours
 };
 
 // Create the context
@@ -75,12 +72,7 @@ export function ContestProvider({ children }: ContestProviderProps) {
   }, []);
 
   return (
-    <ContestContext.Provider value={{ 
-      contestState, 
-      startDate: CONTEST_START_DATE, 
-      registrationDate: REGISTRATION_START_DATE, 
-      duration: CONTEST_DURATION_HOURS 
-    }}>
+    <ContestContext.Provider value={{ contestState }}>
       {children}
     </ContestContext.Provider>
   );

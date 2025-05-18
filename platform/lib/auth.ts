@@ -1,19 +1,14 @@
-import * as argon2 from 'argon2';
+import * as bcrypt from 'bcryptjs';
 
 /**
- * Hashes a password using argon2id
+ * Hashes a password using bcrypt
  * 
  * @param password - The password to hash
  * @returns A promise that resolves to the hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
-  return await argon2.hash(password, {
-    type: argon2.argon2id,
-    // Recommended parameters for enhanced security
-    memoryCost: 65536, // 64MB
-    timeCost: 3, // 3 iterations
-    parallelism: 1, // Number of parallel threads
-  });
+  const salt = await bcrypt.genSalt(12); // 12 rounds is a good balance between security and speed
+  return await bcrypt.hash(password, salt);
 }
 
 /**
@@ -25,7 +20,7 @@ export async function hashPassword(password: string): Promise<string> {
  */
 export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
   try {
-    return await argon2.verify(hashedPassword, password);
+    return await bcrypt.compare(password, hashedPassword);
   } catch (error) {
     console.error('Error verifying password:', error);
     return false;

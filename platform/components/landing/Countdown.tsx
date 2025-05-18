@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useContest } from "@/components/contexts/ContestContext";
+import { CONTEST_START_DATE } from "@/components/contexts/ContestContext";
 
 const MS = 1;
 const SECOND = MS * 1000;
@@ -15,11 +15,9 @@ function Countdown() {
     const mins = useRef<HTMLSpanElement>(null);
     const secs = useRef<HTMLSpanElement>(null);
     
-    const { startDate } = useContest();
-    
     useEffect(() => {
         const updateCountdown = () => {
-            const diff = startDate.getTime() - Date.now();
+            const diff = CONTEST_START_DATE.getTime() - Date.now();
             
             const remainingTime = Math.max(0, diff);
             
@@ -36,7 +34,7 @@ function Countdown() {
         return () => {
             clearInterval(interval);
         }
-    }, [startDate]);
+    }, []);
     
     return (
         <div className="w-full flex gap-4 text-md md:text-2xl drop-shadow-[0px_0px_5px_#ffffff44]">
