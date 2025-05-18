@@ -5,17 +5,15 @@ import Section from "@/components/common/Section";
 import { 
   useIsContestStarted, 
   useIsContestNotStarted 
-} from '@/contexts/ContestContext';
-import { getButtonClasses } from '@/lib/ui-utils';
+} from '@/components/contexts/ContestContext';
+import { getButtonClasses } from '@/lib/utils';
 
 export default function HeroSection() {
     const isStarted = useIsContestStarted();
     const isNotStarted = useIsContestNotStarted();
     
-    // Determine button text based on contest state
     const buttonText = isStarted ? 'Login' : 'Register';
     
-    // Determine button styling and behavior using standardized UI utility
     const isDisabled = isNotStarted;
     const buttonClasses = getButtonClasses('primary', 'md', false) + 
         (isDisabled ? ' opacity-50 cursor-not-allowed' : '');

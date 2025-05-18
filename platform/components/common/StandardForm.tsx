@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode } from 'react';
-import { getInputClasses, getButtonClasses, getFormGroupClasses, getLabelClasses, getAlertClasses } from '@/lib/ui-utils';
+import { getInputClasses, getButtonClasses, getFormGroupClasses, getLabelClasses, getAlertClasses } from '@/lib/utils';
 
 type FormProps = {
   onSubmit: (e: React.FormEvent) => void;

@@ -1,8 +1,6 @@
 "use client";
 
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { getSession } from '@/actions/auth/getSession';
-import { logout } from '@/actions/auth/logout';
 
 type Member = {
   id: number;
@@ -30,43 +28,19 @@ const TeamContext = createContext<TeamContextType | undefined>(undefined);
 
 export function TeamProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [team, setTeam] = useState<Team | null>(null);
 
   async function refreshTeam() {
-    try {
-      setIsLoading(true);
-      const sessionData = await getSession();
-      
-      if (sessionData.authenticated && sessionData.team) {
-        setIsAuthenticated(true);
-        setTeam(sessionData.team);
-      } else {
-        setIsAuthenticated(false);
-        setTeam(null);
-      }
-    } catch (error) {
-      console.error('Error fetching team data:', error);
-      setIsAuthenticated(false);
-      setTeam(null);
-    } finally {
-      setIsLoading(false);
-    }
+    // Will be implemented when server actions are ready
+    return;
   }
 
   async function handleLogout() {
-    try {
-      await logout();
-      setIsAuthenticated(false);
-      setTeam(null);
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+    // Will be implemented when server actions are ready
+    setIsAuthenticated(false);
+    setTeam(null);
   }
-
-  useEffect(() => {
-    refreshTeam();
-  }, []);
 
   return (
     <TeamContext.Provider 

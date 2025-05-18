@@ -21,7 +21,6 @@ export default function RegistrationSuccessModal({
       onClose={onClose}
       showCloseButton={false}
     >
-      {/* Success Icon */}
       <div className="pt-8 flex justify-center">
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
@@ -30,7 +29,6 @@ export default function RegistrationSuccessModal({
         </div>
       </div>
       
-      {/* Content */}
       <div className="p-6 text-center">
         <h2 className="text-2xl font-bold text-white mb-2">Registration Successful!</h2>
         

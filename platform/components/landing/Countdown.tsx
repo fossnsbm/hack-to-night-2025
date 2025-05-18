@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useContest } from "@/contexts/ContestContext";
+import { useContest } from "@/components/contexts/ContestContext";
 
 const MS = 1;
 const SECOND = MS * 1000;
@@ -15,14 +15,12 @@ function Countdown() {
     const mins = useRef<HTMLSpanElement>(null);
     const secs = useRef<HTMLSpanElement>(null);
     
-    // Get contest start date from context
     const { startDate } = useContest();
     
     useEffect(() => {
         const updateCountdown = () => {
             const diff = startDate.getTime() - Date.now();
             
-            // Don't show negative numbers if the contest has already started
             const remainingTime = Math.max(0, diff);
             
             days.current!.textContent = ((remainingTime / DAY) >> 0).toString().padStart(2, "0");
@@ -31,10 +29,8 @@ function Countdown() {
             secs.current!.textContent = (((remainingTime % MINUTE) / SECOND) >> 0).toString().padStart(2, "0");
         };
         
-        // Update immediately
         updateCountdown();
         
-        // Then update every second
         const interval = setInterval(updateCountdown, 1000);
 
         return () => {

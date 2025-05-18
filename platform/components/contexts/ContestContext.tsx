@@ -21,6 +21,10 @@ export enum ContestState {
   STARTED = 'STARTED'
 }
 
+const REGISTRATION_START_DATE = new Date("2025-05-20T00:00:00Z+05:30");
+const CONTEST_START_DATE = new Date("2025-05-29T22:00:00Z+05:30");
+const CONTEST_DURATION_HOURS = 8;
+
 // Contest context type
 type ContestContextType = {
   contestState: ContestState;
@@ -35,21 +39,10 @@ const ContestContext = createContext<ContestContextType | undefined>(undefined);
 // Provider props
 type ContestProviderProps = {
   children: ReactNode;
-  initialStartDate: Date;
-  initialRegistrationDate: Date;
-  initialDuration: number;
 };
 
 // Provider component
-export function ContestProvider({
-  children,
-  initialStartDate,
-  initialRegistrationDate,
-  initialDuration
-}: ContestProviderProps) {
-  const [startDate] = useState<Date>(initialStartDate);
-  const [registrationDate] = useState<Date>(initialRegistrationDate);
-  const [duration] = useState<number>(initialDuration);
+export function ContestProvider({ children }: ContestProviderProps) {
   const [contestState, setContestState] = useState<ContestState>(ContestState.NOT_STARTED);
 
   // Calculate contest state based on current time
@@ -57,12 +50,12 @@ export function ContestProvider({
     // Update the contest state initially and every minute
     const updateContestState = () => {
       const now = new Date();
-      const endDate = new Date(startDate.getTime() + (duration * 60 * 60 * 1000));
+      const endDate = new Date(CONTEST_START_DATE.getTime() + (CONTEST_DURATION_HOURS * 60 * 60 * 1000));
       
-      if (now >= startDate && now < endDate) {
+      if (now >= CONTEST_START_DATE && now < endDate) {
         // Contest is active
         setContestState(ContestState.STARTED);
-      } else if (now >= registrationDate && now < startDate) {
+      } else if (now >= REGISTRATION_START_DATE && now < CONTEST_START_DATE) {
         // Registration period
         setContestState(ContestState.REGISTRATION);
       } else {
@@ -79,14 +72,14 @@ export function ContestProvider({
     
     // Cleanup interval on unmount
     return () => clearInterval(interval);
-  }, [startDate, registrationDate, duration]);
+  }, []);
 
   return (
     <ContestContext.Provider value={{ 
       contestState, 
-      startDate, 
-      registrationDate, 
-      duration 
+      startDate: CONTEST_START_DATE, 
+      registrationDate: REGISTRATION_START_DATE, 
+      duration: CONTEST_DURATION_HOURS 
     }}>
       {children}
     </ContestContext.Provider>

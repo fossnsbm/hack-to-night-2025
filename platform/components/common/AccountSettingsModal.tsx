@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useTeam } from '@/contexts/TeamContext';
-import { updateTeam } from '@/actions/auth/updateTeam';
+import { useTeam } from '@/components/contexts/TeamContext';
+import { mockUpdateTeam } from '@/lib/mockData';
 import Modal from './Modal';
 
 type TeamMember = {
@@ -25,10 +25,8 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   
-  // Initialize members from team data
   const [members, setMembers] = useState<TeamMember[]>([]);
   
-  // Update fields when team data changes
   useEffect(() => {
     if (team) {
       setTeamName(team.name);
@@ -40,7 +38,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
     }
   }, [team]);
 
-  // Reset password fields when section is collapsed
   useEffect(() => {
     if (activeSection !== 'password') {
       setCurrentPassword('');
@@ -49,10 +46,8 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
     }
   }, [activeSection]);
 
-  // Check if current user is team leader
   const isLeader = team?.leader === team?.members?.find(m => m.email === team.leader)?.email;
   
-  // Debug team leader status
   useEffect(() => {
     if (team) {
       console.log('Team Leader Email:', team.leader);
@@ -77,7 +72,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
       return;
     }
     
-    // Password validation for new password
     if (activeSection === 'password') {
       if (!currentPassword) {
         setError('Current password is required');
@@ -114,7 +108,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
         updateData.newPassword = newPassword;
       }
       
-      // Add updated members if changed
       if (members.some((member, idx) => 
         member.name !== team?.members[idx]?.name || 
         member.email !== team?.members[idx]?.email
@@ -122,20 +115,18 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
         updateData.members = members;
       }
 
-      // Only update if there are changes
       if (Object.keys(updateData).length === 0) {
         setError('No changes to save');
         setIsSubmitting(false);
         return;
       }
 
-      const result = await updateTeam(updateData);
+      const result = await mockUpdateTeam(updateData);
       
       if (result.success) {
         setSuccess('Team settings updated successfully');
         await refreshTeam();
         
-        // Reset password fields and collapse section after successful update
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -183,7 +174,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
           )}
 
           <form onSubmit={handleUpdateTeam}>
-            {/* Team Name */}
             <div className="mb-4">
               <label className="block text-sm text-gray-300 mb-1">Team Name</label>
               <input
@@ -196,10 +186,8 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
               />
             </div>
             
-            {/* Password Change Section */}
             {isLeader && (
               <div className="mb-4">
-                {/* Collapsible Header */}
                 <button
                   type="button"
                   onClick={() => toggleSection('password')}
@@ -219,10 +207,8 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                   </svg>
                 </button>
                 
-                {/* Expanded Password Fields */}
                 {activeSection === 'password' && (
                   <div className="mb-2 px-3 py-3 bg-gray-900/50 border border-gray-700 rounded-lg">
-                    {/* Current Password */}
                     <div className="mb-3">
                       <label className="block text-sm text-gray-300 mb-1">Current Password</label>
                       <input
@@ -236,7 +222,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                       />
                     </div>
                     
-                    {/* New Password */}
                     <div className="mb-3">
                       <label className="block text-sm text-gray-300 mb-1">New Password</label>
                       <input
@@ -250,7 +235,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                       />
                     </div>
                     
-                    {/* Confirm New Password */}
                     <div>
                       <label className="block text-sm text-gray-300 mb-1">Confirm New Password</label>
                       <input
@@ -268,9 +252,7 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
               </div>
             )}
             
-            {/* Team Members Section */}
             <div className="mb-6">
-              {/* Collapsible Header */}
               <button
                 type="button"
                 onClick={() => toggleSection('members')}
@@ -290,7 +272,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                 </svg>
               </button>
               
-              {/* Collapsed Summary View */}
               {activeSection !== 'members' && (
                 <div className="flex flex-wrap gap-1.5 px-2 py-1.5">
                   {members.map((member, idx) => (
@@ -304,17 +285,14 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                 </div>
               )}
               
-              {/* Expanded View with Member Cards */}
               {activeSection === 'members' && (
                 <div className="mt-2">
-                  {/* Member Card */}
                   <div className="bg-gray-900/70 backdrop-blur-sm rounded-lg p-4 border border-blue-500/30 mb-2">
                     <div className="flex justify-between items-center mb-3">
                       <h3 className="text-sm font-semibold text-white">
                         {activeSlide === 0 ? 'Team Leader' : `Member ${activeSlide + 1}`}
                       </h3>
                       
-                      {/* Card Navigation */}
                       <div className="flex gap-2 items-center">
                         <button 
                           type="button" 
@@ -338,7 +316,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                       </div>
                     </div>
                     
-                    {/* Member Form */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs text-gray-300 mb-1">Name</label>
@@ -365,7 +342,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                     </div>
                   </div>
                   
-                  {/* Member Indicator Dots */}
                   <div className="flex justify-center gap-1 mt-3">
                     {members.map((_, index) => (
                       <button 
@@ -382,9 +358,7 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
               )}
             </div>
             
-            {/* Action Buttons */}
             <div className="flex flex-col gap-2">
-              {/* Save Button */}
               <button
                 type="submit"
                 className="w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium rounded hover:from-cyan-600 hover:to-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -399,7 +373,6 @@ export default function AccountSettingsModal({ isOpen, onClose }: { isOpen: bool
                 </p>
               )}
               
-              {/* Logout Button */}
               <button
                 type="button"
                 onClick={handleLogout}

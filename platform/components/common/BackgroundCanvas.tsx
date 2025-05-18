@@ -98,8 +98,6 @@ function update(delta: number, timestamp: number) {
     const scroll_y_delta = scroll_top - last_scroll_y;
     last_scroll_y = scroll_top;
 
-    // Stars
-
     stars.scroll_amount -= (scroll_y_delta / canvas.height) * 0.2;
 
     for (const star of stars.stars) {
@@ -131,8 +129,6 @@ function update(delta: number, timestamp: number) {
     stars.scroll_amount -= stars.scroll_amount * delta;
 
     if (isLandingPage) {
-        // Moon
-
         const moon_pos: Vec2 = {
             x: (1 - (MOON_SIZE * 2/3)),
             y: (1 - ((MOON_SIZE * (canvas.width / canvas.height)) * 2/3))
@@ -149,7 +145,6 @@ function update(delta: number, timestamp: number) {
         moon.pos.x = moon_pos.x + moon.offset.x;
         moon.pos.y = moon_pos.y + moon.offset.y;
         
-        // Astronaut
         const astro_src_dims = imgDims("astronaut.png");
         const astro_dims: Vec2 = {
             x: ASTRO_WIDTH,
@@ -186,8 +181,6 @@ function update(delta: number, timestamp: number) {
         
         astro.pos.x = astro_pos.x + astro.offset.x;
         astro.pos.y = astro_pos.y + astro.offset.y;
-
-        // Spaceship
 
         const spaceship_src_dims = imgDims("spaceship.png");
         const spaceship_dims: Vec2 = {
@@ -227,14 +220,12 @@ function render() {
     ctx.fillStyle = "#081016";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Stars - Always render stars regardless of page
     for (const star of stars.stars) {
         ctx.globalAlpha = Math.pow(star.shining_factor, 1 / 2.2);
         ctx.fillStyle = `rgb(255, 255, 255)`;
         ctx.fillRect(star.pos.x * canvas.width, star.pos.y * canvas.height, STAR_SIZE, STAR_SIZE);
     }
 
-    // Images - Only for landing page
     if (isLandingPage) {
         ctx.globalAlpha = 1.0;
 
@@ -287,15 +278,14 @@ async function init() {
     await imgAdd("astronaut.png");
     await imgAdd("spaceship.png");
 
-    // Initialize stars
     stars.stars = [];
     for (let i = 0; i < STAR_NUM; i++) {
         stars.stars.push({
             pos: { x: Math.random(), y: Math.random() },
-            last_shined: Math.random() * STAR_SHINE_DUR, // Randomize initial shine time
+            last_shined: Math.random() * STAR_SHINE_DUR, 
             shining_time: (STAR_SHINE_DUR * 0.2) + (Math.random() * (STAR_SHINE_DUR * 0.8)),
             float_speed_factor: (STAR_FLOAT_SPEED * 0.60) + (Math.random() * (STAR_FLOAT_SPEED * 0.40)),
-            shining_factor: Math.random() // Randomize initial shine factor
+            shining_factor: Math.random() 
         });
     }
 

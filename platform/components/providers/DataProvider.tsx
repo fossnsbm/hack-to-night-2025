@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { getLeaderboard, getRecentActivity } from '@/actions/teams';
+import { mockGetLeaderboard, mockGetRecentActivity, type LeaderboardTeam, type ActivityNotification } from '@/lib/mockData';
 
 // Types for notifications and leaderboard updates
 type Notification = {
@@ -11,17 +11,10 @@ type Notification = {
   timestamp: Date;
 };
 
-type LeaderboardTeam = {
-  id: number;
-  name: string;
-  score: number;
-  createdAt: Date;
-};
-
 // Context type
 type DataContextType = {
   isUpdating: boolean; 
-  notifications: Notification[];
+  notifications: ActivityNotification[];
   leaderboard: LeaderboardTeam[];
 };
 
@@ -43,7 +36,7 @@ type DataProviderProps = {
 
 export function DataProvider({ children }: DataProviderProps) {
   const [isPolling, setIsPolling] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<ActivityNotification[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardTeam[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
@@ -51,13 +44,13 @@ export function DataProvider({ children }: DataProviderProps) {
   const fetchUpdates = async () => {
     try {
       // Fetch leaderboard
-      const leaderboardData = await getLeaderboard();
+      const leaderboardData = await mockGetLeaderboard();
       if (leaderboardData?.length > 0) {
         setLeaderboard(leaderboardData);
       }
 
       // Fetch recent activity for notifications
-      const activityData = await getRecentActivity(20);
+      const activityData = await mockGetRecentActivity();
       if (activityData?.length > 0) {
         // Check if we have new notifications since last update
         const newActivity = activityData.filter(activity => {

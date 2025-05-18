@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import * as motion from "motion/react-client";
 import { AnimatePresence } from 'motion/react';
-import { useIsContestStarted } from '@/contexts/ContestContext';
-import { useTeam } from '@/contexts/TeamContext';
+import { useIsContestStarted } from '@/components/contexts/ContestContext';
+import { useTeam } from '@/components/contexts/TeamContext';
 import AccountSettingsModal from './AccountSettingsModal';
 import { usePathname } from 'next/navigation';
 
@@ -16,20 +16,16 @@ function Header() {
   const pathname = usePathname();
   const isLandingPage = pathname === '/';
   
-  // Determine correct href prefix for hash links
   const hashPrefix = isLandingPage ? '' : '/';
 
-  // Navigation items based on authentication state
   let navItems: Record<string, string> = {};
 
-  // If user is authenticated, show challenges and leaderboard
   if (isAuthenticated && isContestStarted) {
     navItems = {
       "Challenges": "/challenges",
       "Leaderboard": "/leaderboard"
     };
   } 
-  // If user is not authenticated, show informational links
   else {
     navItems = {
       "About Us": `${hashPrefix}#about`,
@@ -44,14 +40,12 @@ function Header() {
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex justify-between items-center w-full">
-            {/* Text Logo */}
             <a href="/" className="flex items-center">
               <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
                 HACKTO night
               </span>
             </a>
 
-            {/* Desktop Navigation */}
             <div className="hidden sm:flex items-center space-x-8">
               {Object.entries(navItems).map(([name, href]) => (
                 <a
@@ -63,7 +57,6 @@ function Header() {
                 </a>
               ))}
               
-              {/* Team Name and Score / Account Settings */}
               {isAuthenticated && team && (
                 <button
                   onClick={() => setShowSettingsModal(true)}
@@ -82,7 +75,6 @@ function Header() {
               )}
             </div>
 
-            {/* Mobile Navigation Toggle */}
             <div className="flex sm:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -104,7 +96,6 @@ function Header() {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -126,7 +117,6 @@ function Header() {
                 </a>
               ))}
               
-              {/* Team Name and Score / Account Settings (Mobile) */}
               {isAuthenticated && team && (
                 <button
                   onClick={() => {
@@ -151,7 +141,6 @@ function Header() {
         )}
       </AnimatePresence>
 
-      {/* Account Settings Modal */}
       <AccountSettingsModal 
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)} 

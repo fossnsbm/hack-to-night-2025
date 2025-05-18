@@ -6,14 +6,13 @@ import Section from '../common/Section';
 import { 
   useIsContestStarted, 
   useIsContestNotStarted 
-} from '@/contexts/ContestContext';
+} from '@/components/contexts/ContestContext';
 import { register } from '@/actions/auth/register';
-import { login } from '@/actions/auth/login';
+import { mockLogin } from '@/lib/mockData';
 import RegistrationSuccessModal from '../common/RegistrationSuccessModal';
 import LoginSuccessModal from '../common/LoginSuccessModal';
 import { AnimatePresence } from 'motion/react';
-import { getSession } from '@/actions/auth/getSession';
-import { getButtonClasses, getInputClasses, getFormGroupClasses, getLabelClasses } from '@/lib/ui-utils';
+import { getButtonClasses, getInputClasses, getFormGroupClasses, getLabelClasses } from '@/lib/utils';
 
 export default function AuthSection() {
   const isStarted = useIsContestStarted();
@@ -49,7 +48,6 @@ function LoginForm() {
     e.preventDefault();
     setError('');
     
-    // Validate form
     if (!email.trim()) {
       setError('Email is required');
       return;
@@ -64,12 +62,10 @@ function LoginForm() {
       setIsSubmitting(true);
       
       console.log(`Submitting login for email: ${email}`);
-      // Call the login server action
-      const result = await login({ email, password });
+      const result = await mockLogin({ email, password });
       console.log('Login result:', result);
       
       if (result.success) {
-        // Use team name directly from the result
         setTeamName(result.team?.name || 'Your Team');
         setShowSuccessModal(true);
       } else {
@@ -89,7 +85,6 @@ function LoginForm() {
         onSubmit={handleSubmit}
         className="w-full max-w-xl md:max-w-2xl p-4 md:p-6 bg-black/30 rounded-lg border border-white/10 backdrop-blur-sm"
       >
-        {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-400 text-sm">
             {error}
@@ -189,7 +184,6 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
     e.preventDefault();
     setError('');
     
-    // Validate form
     if (!teamName.trim()) {
       setError('Team name is required');
       return;
@@ -213,7 +207,6 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
     try {
       setIsSubmitting(true);
       
-      // Call the register server action with all members
       const result = await register({
         teamName: teamName.trim(),
         leaderName: members[0].name.trim(),
@@ -242,14 +235,12 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
         onSubmit={handleSubmit} 
         className={`w-full max-w-xl md:max-w-2xl p-4 md:p-6 bg-black/30 rounded-lg border border-white/10 backdrop-blur-sm ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
       >
-        {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-400 text-sm">
             {error}
           </div>
         )}
         
-        {/* Team Information */}
         <div className={getFormGroupClasses('md')}>
           <label htmlFor="teamName" className={getLabelClasses('md')}>Team Name</label>
           <input 
@@ -293,7 +284,6 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
           />
         </div>
         
-        {/* Member Slideshow */}
         <div className={getFormGroupClasses('md')}>
           <div className="flex justify-between items-center mb-2">
             <label className={getLabelClasses('md')}>Team Members ({members.length})</label>
@@ -321,14 +311,12 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
             </div>
           </div>
           
-          {/* Member Card */}
           <div className="bg-black/20 rounded-lg p-3 md:p-4 border border-white/10 mb-2">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-xs md:text-sm font-semibold">
                 {activeSlide === 0 ? 'Team Leader' : `Member ${activeSlide + 1}`}
               </h3>
               
-              {/* Card Navigation */}
               <div className="flex gap-1 md:gap-2 items-center">
                 <button 
                   type="button" 
@@ -352,7 +340,6 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
               </div>
             </div>
             
-            {/* Member Form */}
             <div className="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
               <div>
                 <label className={getLabelClasses('sm')}>Name</label>
@@ -381,7 +368,6 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
             </div>
           </div>
           
-          {/* Member Indicator Dots */}
           <div className="flex justify-center gap-1 mt-2">
             {members.map((_, index) => (
               <button 

@@ -1,6 +1,6 @@
 import Section from "@/components/common/Section";
 import Title from "@/components/common/Title";
-import { getButtonClasses } from '@/lib/ui-utils';
+import { getButtonClasses } from '@/lib/utils';
 
 export default function ContactSection() {
     return (

@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { getChallenge } from "@/actions/challenges/getChallenge";
 import { submitFlag } from "@/actions/challenges/submitFlag";
-import { useTeam } from "@/contexts/TeamContext";
+import { useTeam } from "@/components/contexts/TeamContext";
 import { useRouter } from "next/navigation";
-import { useIsContestStarted } from "@/contexts/ContestContext";
+import { useIsContestStarted } from "@/components/contexts/ContestContext";
 import Section from "@/components/common/Section";
 import useSWR from 'swr';
 import { 
