@@ -14,7 +14,7 @@ const faqItems = [
     },
     {
         question: "What are the team requirements for the event?",
-        answer: "Teams must consist of 4 to 6 members. Each member should be a currently enrolled undergraduate. Interdisciplinary teams are encouraged to bring diverse ideas and strengths to the table.",
+        answer: "Teams must consist of 3 to 5 members. Each member should be a currently enrolled undergraduate. Interdisciplinary teams are encouraged to bring diverse ideas and strengths to the table.",
     },
     {
         question: "How do I register?",
