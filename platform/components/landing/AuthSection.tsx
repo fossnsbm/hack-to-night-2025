@@ -327,10 +327,15 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
         <div className={getFormGroupClasses('md')}>
           <label htmlFor="teamContactNo" className={getLabelClasses('md')}>Team Contact No.</label>
           <input 
-            type="text" 
+            type="tel" 
             id="teamContactNo" 
             value={teamContactNo}
             onChange={(e) => setTeamContactNo(e.target.value)}
+            onKeyPress={(e) => {
+              if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
             className={`${getInputClasses('default')} ${
               (teamContactNo && !validateTeamContactNo(teamContactNo) && error.includes('contact number'))
                 ? 'border-red-500 bg-red-900/20' 
@@ -379,7 +384,10 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
         
         <div className={getFormGroupClasses('md')}>
           <div className="flex justify-between items-center mb-2">
-            <label className={getLabelClasses('md')}>Team Members ({members.length})</label>
+            <div>
+              <label className={getLabelClasses('md')}>Team Members</label>
+              <p className="text-xs text-gray-400 mt-0.5">Maximum 5 members allowed</p>
+            </div>
             <div className="flex gap-1 md:gap-2">
               {members.length < 5 && (
                 <button 
