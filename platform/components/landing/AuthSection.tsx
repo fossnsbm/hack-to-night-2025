@@ -145,6 +145,7 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
   const router = useRouter();
   const [activeSlide, setActiveSlide] = useState(0);
   const [teamName, setTeamName] = useState('');
+  const [teamContactNo, setTeamContactNo] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -181,7 +182,13 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
   };
   
   const validateEmail = (email: string): boolean => {
-    return email.trim().toLowerCase().endsWith('@students.nsbm.ac.lk');
+    const emailRegex = /.+@students\.nsbm\.ac\.lk$/;
+    return emailRegex.test(email.trim().toLowerCase());
+  };
+
+  const validateTeamContactNo = (contactNo: string): boolean => {
+    const phoneRegex = /^(?:0)?(7[01245678]\d{7})$/;
+    return phoneRegex.test(contactNo.trim());
   };
 
   const validateMemberEmails = (): {valid: boolean, errorMsg?: string} => {
@@ -204,6 +211,16 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
     
     if (!teamName.trim()) {
       setError('Team name is required');
+      return;
+    }
+
+    if (!teamContactNo.trim()) {
+      setError('Team contact number is required');
+      return;
+    }
+
+    if (!validateTeamContactNo(teamContactNo)) {
+      setError('Invalid team contact number format. Use 07XXXXXXXX');
       return;
     }
     
@@ -229,6 +246,19 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
       return;
     }
     
+    
+    const memberEmails = members
+      .map(member => member.email.trim().toLowerCase())
+      .filter(email => email !== ''); 
+    
+    const uniqueMemberEmails = new Set(memberEmails);
+    if (memberEmails.length !== uniqueMemberEmails.size) {
+      setError('Duplicate member emails are not allowed. Please ensure each member has a unique email.');
+      
+      
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
       
@@ -237,7 +267,8 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
         leaderName: members[0].name.trim(),
         email: members[0].email.trim(),
         password: password,
-        members: members
+        members: members,
+        teamContactNo: teamContactNo.trim()
       });
       
       if (result.success) {
@@ -294,6 +325,32 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
         </div>
         
         <div className={getFormGroupClasses('md')}>
+          <label htmlFor="teamContactNo" className={getLabelClasses('md')}>Team Contact No.</label>
+          <input 
+            type="tel" 
+            id="teamContactNo" 
+            value={teamContactNo}
+            onChange={(e) => setTeamContactNo(e.target.value)}
+            onKeyPress={(e) => {
+              if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            className={`${getInputClasses('default')} ${
+              (teamContactNo && !validateTeamContactNo(teamContactNo) && error.includes('contact number'))
+                ? 'border-red-500 bg-red-900/20' 
+                : ''
+            }`}
+            placeholder="07XXXXXXXX"
+            disabled={disabled || isSubmitting}
+            required
+          />
+          {teamContactNo && !validateTeamContactNo(teamContactNo) && error.includes('contact number') && (
+            <p className="mt-1 text-xs text-red-500">Invalid team contact number format. Use 07XXXXXXXX</p>
+          )}
+        </div>
+        
+        <div className={getFormGroupClasses('md')}>
           <label htmlFor="password" className={getLabelClasses('md')}>Team Password</label>
           <input 
             type="password" 
@@ -327,7 +384,10 @@ function RegistrationForm({ disabled = false }: { disabled?: boolean }) {
         
         <div className={getFormGroupClasses('md')}>
           <div className="flex justify-between items-center mb-2">
-            <label className={getLabelClasses('md')}>Team Members ({members.length})</label>
+            <div>
+              <label className={getLabelClasses('md')}>Team Members</label>
+              <p className="text-xs text-gray-400 mt-0.5">Maximum 5 members allowed</p>
+            </div>
             <div className="flex gap-1 md:gap-2">
               {members.length < 5 && (
                 <button 

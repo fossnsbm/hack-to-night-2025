@@ -14,11 +14,13 @@ type RegisterTeamInput = {
   email: string;
   password: string;
   members: TeamMember[];
+  teamContactNo: string;
 };
 
 
 function isValidEmail(email: string): boolean {
-  return email.trim().toLowerCase().endsWith('@students.nsbm.ac.lk');
+  const emailRegex = /.+@students\.nsbm\.ac\.lk$/;
+  return emailRegex.test(email.trim().toLowerCase());
 }
 
 export async function register(data: RegisterTeamInput) {
@@ -26,6 +28,15 @@ export async function register(data: RegisterTeamInput) {
     
     if (!isValidEmail(data.email)) {
       return { success: false, error: "Leader email must end with @students.nsbm.ac.lk" };
+    }
+
+    if (!data.teamContactNo || data.teamContactNo.trim() === '') {
+      return { success: false, error: "Team contact number is required" };
+    }
+    
+    const phoneRegex = /^(?:0)?(7[01245678]\d{7})$/;
+    if (!phoneRegex.test(data.teamContactNo.trim())) {
+      return { success: false, error: "Invalid team contact number format. Use 07XXXXXXXX" };
     }
 
     
@@ -69,6 +80,18 @@ export async function register(data: RegisterTeamInput) {
     }
 
     
+    const submittedMemberEmails = data.members
+      .map(member => member.email.trim().toLowerCase())
+      .filter(email => email); 
+
+    if (submittedMemberEmails.length > 0) {
+      const uniqueSubmittedMemberEmails = new Set(submittedMemberEmails);
+      if (submittedMemberEmails.length !== uniqueSubmittedMemberEmails.size) {
+        return { success: false, error: "Duplicate member emails are not allowed within the team." };
+      }
+    }
+
+    
     const hashedPassword = await hashPassword(data.password);
 
     
@@ -108,6 +131,7 @@ export async function register(data: RegisterTeamInput) {
       leader: leaderDoc.id, 
       password: hashedPassword,
       members: [leaderDoc.id, ...memberDocs.map(doc => doc.id)], 
+      teamContactNo: data.teamContactNo.trim(),
       createdAt: new Date()
     };
     

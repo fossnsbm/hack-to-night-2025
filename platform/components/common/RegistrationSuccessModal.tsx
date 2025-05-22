@@ -8,7 +8,7 @@ type RegistrationSuccessModalProps = {
   onClose: () => void;
   onDashboard?: () => void;
 };
-//irushi
+
 export default function RegistrationSuccessModal({
   isOpen,
   teamName,
