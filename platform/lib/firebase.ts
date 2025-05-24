@@ -1,4 +1,4 @@
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -36,6 +36,5 @@ function initFirebase() {
   return global.firebaseApp;
 }
 
-const app = initFirebase();
-
+export const app = initFirebase();
 export const db = getFirestore(); 
