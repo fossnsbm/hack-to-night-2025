@@ -1,7 +1,7 @@
 # This Dockerfile builds a CTFd (https://github.com/CTFd/CTFd) image that
 # enables TLS connectivity to Azure Database for MySQL.
 # More info: https://learn.microsoft.com/en-gb/azure/postgresql/flexible-server/concepts-networking-ssl-tls#downloading-root-ca-certificates-and-updating-application-clients-in-certificate-pinning-scenarios
-FROM ctfd/ctfd:3.7.0
+FROM ctfd/ctfd:3.7.7
 
 USER root
 RUN apt-get update && apt-get install -y wget --no-install-recommends \
