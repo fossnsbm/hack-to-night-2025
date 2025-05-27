@@ -121,7 +121,8 @@ class UserList(Resource):
                 .paginate(per_page=50, max_per_page=100, error_out=False)
             )
 
-        response = UserSchema(view="user", many=True).dump(users.items)
+        user_type = get_current_user_type(fallback="user")
+        response = UserSchema(view=user_type, many=True).dump(users.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400

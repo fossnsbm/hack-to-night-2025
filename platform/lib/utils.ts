@@ -1,6 +1,48 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+type ApiRequest = {
+    path: string;
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+    params?: Record<string, string>;
+    body?: Record<string, any>;
+};
+
+export async function api({ path, method, params, body }: ApiRequest): Promise<Record<string, any> | null> {
+    const init: RequestInit = {
+        method: method ?? "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.CTFD_TOKEN}`
+        },
+    }
+
+    const url = new URL(path, process.env.CTFD_URL)
+
+    if (params) {
+        for (const param in params) {
+            url.searchParams.set(param, params[param])
+        }
+    }
+
+    if (body) {
+        init.body = JSON.stringify(body)
+    }
+
+    try {
+        const res = await fetch(url, init);
+        const json = await res.json()
+
+        if (json.success) {
+            return json
+        }
+    } catch (e) {
+        console.error("error while fetching", url, e);
+    }
+
+    return null
+}
+
 /**
  * A utility function for conditionally joining class names together
  * Combines clsx for conditional classes and tailwind-merge to handle Tailwind CSS class conflicts

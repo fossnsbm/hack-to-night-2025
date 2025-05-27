@@ -16,7 +16,7 @@ class TeamSchema(ma.ModelSchema):
         model = Teams
         include_fk = True
         dump_only = ("id", "oauth_id", "created", "members")
-        load_only = ("password",)
+        load_only = ()
 
     name = field_for(
         Teams,

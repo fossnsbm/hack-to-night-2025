@@ -315,6 +315,12 @@ def init_request_processors(app):
                 login_user(user)
 
     @app.before_request
+    def restrict_api_to_admins():
+        if request.path.startswith('/api'):
+            if not is_admin():
+                abort(403)
+
+    @app.before_request
     def csrf():
         try:
             func = app.view_functions[request.endpoint]

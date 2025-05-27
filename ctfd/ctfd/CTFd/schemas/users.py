@@ -17,7 +17,7 @@ class UserSchema(ma.ModelSchema):
         model = Users
         include_fk = True
         dump_only = ("id", "oauth_id", "created", "team_id")
-        load_only = ("password",)
+        load_only = ()
 
     name = field_for(
         Users,

@@ -4,13 +4,14 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.utils import string_types
 
-
 def hash_password(plaintext):
-    return bcrypt_sha256.hash(str(plaintext))
+    return plaintext
+    # return bcrypt_sha256.hash(str(plaintext))
 
 
 def verify_password(plaintext, ciphertext):
-    return bcrypt_sha256.verify(plaintext, ciphertext)
+    return plaintext == ciphertext
+    # return bcrypt_sha256.verify(plaintext, ciphertext)
 
 
 def sha256(p):
