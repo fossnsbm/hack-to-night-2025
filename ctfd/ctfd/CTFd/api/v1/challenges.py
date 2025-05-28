@@ -510,9 +510,9 @@ class Challenge(Resource):
 
 @challenges_namespace.route("/attempt")
 class ChallengeAttempt(Resource):
-    @check_challenge_visibility
-    @during_ctf_time_only
-    @require_verified_emails
+    # @check_challenge_visibility
+    # @during_ctf_time_only
+    # @require_verified_emails
     def post(self):
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403

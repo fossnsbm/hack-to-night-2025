@@ -1,317 +1,259 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { mockSubmitFlag, mockGetChallenge } from "@/lib/mockData";
-import { useTeam } from "@/components/contexts/TeamContext";
-import { useRouter } from "next/navigation";
-import { useIsContestStarted } from "@/components/contexts/ContestContext";
-import Section from "@/components/common/Section";
-import useSWR from 'swr';
-import { 
-  getButtonClasses, 
-  getInputClasses, 
-  getCardClasses, 
-  getAlertClasses 
-} from "@/lib/utils";
-import { notFound } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
-type ChallengeType = {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  difficulty: string;
-  points: number;
-  hint?: string;
-  isSolved: boolean;
-  solves: {
-    id: number;
-    teamId: number;
-    challengeId: number;
-    solvedAt: Date;
-  }[];
-  createdAt: Date;
-};
+import LoadingSection from '@/components/common/LoadingSection';
+import { useAuth } from "@/components/contexts/AuthContext";
+import { getButtonClasses, getInputClasses, getCardClasses, getAlertClasses } from "@/lib/client-utils";
+import { getChallengeExtended, submitFlag } from '@/actions/team';
+import { ChallengeExtended } from '@/lib/types';
 
-interface ChallengeInteractiveContentProps {
-  initialChallengeData: {
-    challenge?: ChallengeType;
-    error?: string;
-  };
-  challengeId: number;
-}
+export default function ChallengePage() {
+    const router = useRouter();
+    const params = useParams();
 
-function ChallengeInteractiveContent({ initialChallengeData, challengeId }: ChallengeInteractiveContentProps) {
-  const [flag, setFlag] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submission, setSubmission] = useState<{
-    status: "success" | "error";
-    message: string;
-  } | null>(null);
-  
-  const { isAuthenticated, isLoading: isLoadingTeam } = useTeam();
-  const isContestStarted = useIsContestStarted();
-  const router = useRouter();
+    const challengeId = typeof params.id! === "string" ? parseInt(params.id!) : parseInt(params.id![0]);
 
-  const swrKey = isAuthenticated && isContestStarted && !isLoadingTeam && !isNaN(challengeId) 
-                 ? `challenge-${challengeId}` 
-                 : null;
+    const { token, team } = useAuth()
 
-  const { data, error: swrError, isLoading: isLoadingSWRChallenge, mutate } = useSWR(
-    swrKey,
-    (key) => (!initialChallengeData.challenge && key) ? mockGetChallenge(challengeId).then(res => res) : Promise.resolve({ challenge: initialChallengeData.challenge, success: true }),
-    {
-      fallbackData: initialChallengeData.challenge ? { challenge: initialChallengeData.challenge, success: true } : undefined,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      refreshInterval: 60000, 
-      dedupingInterval: 5000,
+    const [challenge, setChallenge] = useState<ChallengeExtended | null>(null)
+    const [flag, setFlag] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [submission, setSubmission] = useState<{
+        status: "success" | "error";
+        message: string;
+    } | null>(null);
+
+    async function fetchChallenge() {
+        if (token) {
+            const res = await getChallengeExtended(token!, challengeId)
+            if (res.success) {
+                setChallenge(res.challenge!)
+            } else {
+                alert(res.error)
+                setChallenge(null)
+            }
+        } else {
+            setChallenge(null)
+        }
     }
-  );
 
-  const currentChallengeResult = data || (initialChallengeData.challenge ? { challenge: initialChallengeData.challenge, success: true } : { error: initialChallengeData.error, success: false });
-  const challengeToDisplay = currentChallengeResult?.challenge as ChallengeType | undefined;
-  const displayError = currentChallengeResult?.error || swrError?.message || initialChallengeData.error;
-  
-  const isLoadingPage = isLoadingTeam || (!challengeToDisplay && !displayError && isLoadingSWRChallenge);
+    useEffect(() => {
+        fetchChallenge()
+    }, [team]);
 
-  useEffect(() => {
-    if (!isLoadingTeam) {
-      if (!isAuthenticated) {
-        console.log("Not authenticated, redirecting to home");
-        router.push("/");
-        return;
-      }
-      if (!isContestStarted) {
-        console.log("Contest not started, redirecting to home");
-        router.push("/");
-        return;
-      }
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        if (!flag.trim()) {
+            setSubmission({ status: "error", message: "Please enter a flag" });
+            return;
+        }
+
+        setSubmitting(true);
+        setSubmission(null);
+
+        try {
+            const result = await submitFlag(token!, challengeId, flag);
+            if (result.success && result.correct) {
+                setSubmission({
+                    status: "success",
+                    message: `Correct! You earned ${challenge!.points} points.`
+                });
+                setFlag("");
+                setTimeout(() => {
+                    router.push("/challenges");
+                }, 3000);
+            } else {
+                setSubmission({ status: "error", message: result.error || "Incorrect flag" });
+            }
+        } catch (err: any) {
+            setSubmission({ status: "error", message: err.message || "An error occurred while submitting your flag" });
+            console.error(err);
+        } finally {
+            setSubmitting(false);
+        }
     }
-  }, [isAuthenticated, isContestStarted, isLoadingTeam, router, challengeId]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!flag.trim()) {
-      setSubmission({ status: "error", message: "Please enter a flag" });
-      return;
-    }
-    
-    setSubmitting(true);
-    setSubmission(null);
-    
-    try {
-      const result = await mockSubmitFlag({ challengeId, flag });
-      if (result.success) {
-        setSubmission({
-          status: "success",
-          message: result.message || `Correct! You earned ${result.points} points.`
-        });
-        mutate(
-          async (currentSWRData: any) => {
-            const updatedChallenge = { ... (currentSWRData?.challenge || challengeToDisplay), isSolved: true };
-            return { ...currentSWRData, challenge: updatedChallenge, success: true};
-          }, 
-          false
-        );
-        setFlag("");
-        setTimeout(() => {
-          router.push("/challenges");
-        }, 3000);
-      } else {
-        setSubmission({ status: "error", message: result.error || "Incorrect flag" });
-      }
-    } catch (err: any) {
-      setSubmission({ status: "error", message: err.message || "An error occurred while submitting your flag" });
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  if (isLoadingPage) {
     return (
-      <Section id="challenge-details-loading">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-          </div>
-        </div>
-      </Section>
-    );
-  }
-
-  if (displayError || !challengeToDisplay) {
-    return (
-      <Section id="challenge-details-error">
-        <div className="max-w-4xl mx-auto">
-          <div className={getAlertClasses('error')}>
-            <p>{displayError || "Challenge data is unavailable."}</p>
-          </div>
-          <div className="mt-6">
-            <button onClick={() => router.push("/challenges")} className={getButtonClasses('secondary')}>
-              Back to Challenges
-            </button>
-          </div>
-        </div>
-      </Section>
-    );
-  }
-  
-  const challenge = challengeToDisplay;
-
-  return (
-    <Section id="challenge-details">
-      <div className="max-w-4xl mx-auto overflow-y-auto h-full">
-        <div className="mb-6">
-          <button onClick={() => router.push("/challenges")} className={getButtonClasses('outline', 'sm')}>
-            <span className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-              Back to Challenges
-            </span>
-          </button>
-        </div>
-        
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
-                {challenge.category}
-              </div>
-              <div className="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
-                {challenge.difficulty}
-              </div>
-              <div className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${
-                challenge.isSolved
-                  ? "bg-green-800 text-green-200"
-                  : "bg-purple-800 text-purple-200"
-              }`}>
-                {challenge.points} pts
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold text-white">{challenge.title}</h1>
-          </div>
-          
-          <div className="flex gap-2">
-            {challenge.isSolved && (
-              <div className="px-3 py-1.5 bg-green-900/30 border border-green-700 rounded-md text-green-400 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg>
-                Solved
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className={getCardClasses('default', 'lg') + ' mb-8'}>
-          <div className="prose prose-invert max-w-none">
-            <p className="text-gray-300 whitespace-pre-line">{challenge.description}</p>
-          </div>
-          
-          {challenge.hint && (
-            <div className="mt-6 p-4 bg-gray-900/50 border border-yellow-700/30 rounded-md">
-              <div className="flex items-center text-yellow-500 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                  <path d="M12 8v4M12 16h.01" />
-                  <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
-                </svg>
-                <span className="font-medium">Hint</span>
-              </div>
-              <p className="text-gray-400">{challenge.hint}</p>
-            </div>
-          )}
-        </div>
-        
-        {!challenge.isSolved ? (
-          <div className={getCardClasses('default', 'lg') + ' mb-6'}>
-            <h2 className="text-xl font-semibold text-white mb-4">Submit Flag</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="flex flex-col md:flex-row gap-4">
-                <input
-                  type="text"
-                  value={flag}
-                  onChange={(e) => setFlag(e.target.value)}
-                  placeholder="Enter flag here..."
-                  className={getInputClasses('dark')}
-                  disabled={submitting}
-                />
-                <button
-                  type="submit"
-                  className={getButtonClasses('primary', 'lg')}
-                  disabled={submitting || isLoadingPage}
-                >
-                  {submitting ? "Submitting..." : "Submit Flag"}
-                </button>
-              </div>
-              {submission && (
-                <div className={`mt-4 ${getAlertClasses(submission.status === "success" ? "success" : "error")}`}>
-                  {submission.message}
+        <LoadingSection id="challenge-details" loading={challenge == null} >
+            <div className="max-w-4xl mx-auto overflow-y-auto h-full">
+                <div className="mb-6">
+                    <button onClick={() => router.push("/challenges")} className={getButtonClasses('outline', 'sm')}>
+                        <span className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                            Back to Challenges
+                        </span>
+                    </button>
                 </div>
-              )}
-            </form>
-          </div>
-        ) : (
-          <div className={getCardClasses('default', 'lg') + ' mb-6 bg-green-900/20 border-green-700'}>
-            <div className="flex items-center gap-2 text-green-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-              <span className="font-medium">You've already solved this challenge!</span>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
+                                {challenge?.category}
+                            </div>
+                            <div className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${challenge?.solved
+                                ? "bg-green-800 text-green-200"
+                                : "bg-purple-800 text-purple-200"
+                                }`}>
+                                {challenge?.points} pts
+                            </div>
+                        </div>
+                        <h1 className="text-3xl font-bold text-white">{challenge?.title}</h1>
+                    </div>
+
+                    <div className="flex gap-2">
+                        {challenge?.solved && (
+                            <div className="px-3 py-1.5 bg-green-900/30 border border-green-700 rounded-md text-green-400 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                                Solved
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className={getCardClasses('default', 'lg') + ' mb-8'}>
+                    <div className="prose prose-invert max-w-none">
+                        <p className="text-gray-300 whitespace-pre-line">{challenge?.description}</p>
+                    </div>
+
+                    {challenge?.connection_info && (
+                        <div className="mt-6 p-4 bg-gray-900/50 border border-blue-700/30 rounded-md">
+                            <div className="flex items-center text-blue-500 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                                <span className="font-medium">Connection Info</span>
+                            </div>
+                            <p className="text-gray-400">{challenge?.connection_info}</p>
+                        </div>
+                    )}
+
+                    {challenge?.files && challenge?.files.length > 0 && (
+                        <div className="mt-6 p-4 bg-gray-900/50 border border-purple-700/30 rounded-md">
+                            <div className="flex items-center text-purple-500 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                                    <path d="M13 2v7h7" />
+                                </svg>
+                                <span className="font-medium">Files</span>
+                            </div>
+                            <div className="space-y-2">
+                                {challenge?.files.map((file, index) => (
+                                    <div key={index} className="flex items-center">
+                                        <button
+                                            onClick={async () => {
+                                                try {
+                                                    const response = await fetch(`/challenges/${challengeId}/download?fileUrl=${encodeURIComponent(file)}`, {
+                                                        headers: {
+                                                            'Authorization': `Bearer ${token}`
+                                                        }
+                                                    });
+
+                                                    if (!response.ok) {
+                                                        const errorData = await response.json();
+                                                        throw new Error(errorData.error || 'Failed to download file');
+                                                    }
+
+                                                    const contentDisposition = response.headers.get('content-disposition');
+                                                    const filename = contentDisposition?.split('filename=')[1]?.replace(/['"]/g, '') || 'download';
+
+                                                    const blob = await response.blob();
+                                                    const url = window.URL.createObjectURL(blob);
+
+                                                    const a = document.createElement('a');
+                                                    a.href = url;
+                                                    a.download = filename;
+                                                    document.body.appendChild(a);
+                                                    a.click();
+
+                                                    window.URL.revokeObjectURL(url);
+                                                    document.body.removeChild(a);
+                                                } catch (error: any) {
+                                                    console.error('Error downloading file:', error);
+                                                    alert(error.message || 'Failed to download file');
+                                                }
+                                            }}
+                                            className="text-purple-400 hover:text-purple-300 flex items-center"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                <polyline points="7 10 12 15 17 10" />
+                                                <line x1="12" y1="15" x2="12" y2="3" />
+                                            </svg>
+                                            Download File {index + 1}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {!challenge?.solved ? (
+                    <div className={getCardClasses('default', 'lg') + ' mb-6'}>
+                        <h2 className="text-xl font-semibold text-white mb-4">Submit Flag</h2>
+                        <form onSubmit={handleSubmit}>
+                            <div className="flex flex-col md:flex-row gap-4">
+                                <input
+                                    type="text"
+                                    value={flag}
+                                    onChange={(e) => setFlag(e.target.value)}
+                                    placeholder="Enter flag here..."
+                                    className={getInputClasses('dark')}
+                                    disabled={submitting}
+                                />
+                                <button
+                                    type="submit"
+                                    className={getButtonClasses('primary', 'lg')}
+                                    disabled={submitting || team == null}
+                                >
+                                    {submitting ? "Submitting..." : "Submit Flag"}
+                                </button>
+                            </div>
+                            {submission && (
+                                <div className={`mt-4 ${getAlertClasses(submission.status === "success" ? "success" : "error")}`}>
+                                    {submission.message}
+                                </div>
+                            )}
+                        </form>
+                    </div>
+                ) : (
+                    <div className={getCardClasses('default', 'lg') + ' mb-6 bg-green-900/20 border-green-700'}>
+                        <div className="flex items-center gap-2 text-green-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                            <span className="font-medium">You've already solved this challenge!</span>
+                        </div>
+                    </div>
+                )}
+
+                <div className={getCardClasses('default', 'lg')}>
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold text-white">Solves</h2>
+                        <button
+                            className={getButtonClasses('secondary', 'sm')}
+                            onClick={fetchChallenge}
+                        >
+                            <span className="flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                                </svg>
+                                <span>Refresh</span>
+                            </span>
+                        </button>
+                    </div>
+                    <p className="text-gray-400">
+                        {challenge?.solves ?? 0} teams have solved this challenge
+                    </p>
+                </div>
             </div>
-          </div>
-        )}
-        
-        <div className={getCardClasses('default', 'lg')}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-white">Solves</h2>
-            <button
-              onClick={() => mutate()}
-              className={getButtonClasses('secondary', 'sm')}
-              disabled={isLoadingSWRChallenge}
-            >
-              {isLoadingSWRChallenge ? 'Refreshing...' : 'Refresh Solves'}
-            </button>
-          </div>
-          <p className="text-gray-400">
-            {challenge.solves?.length || 0} teams have solved this challenge
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
+        </LoadingSection>
+    );
 }
-interface ChallengePageProps {
-  params: { id: string };
-}
-
-export default async function ChallengePage({ params }: ChallengePageProps) {
-  const id = params.id;
-  const challengeId = parseInt(id, 10);
-
-  let initialDataPayload: ChallengeInteractiveContentProps['initialChallengeData'] = {};
-
-  if (isNaN(challengeId)) {
-    notFound();
-  }
-
-  try {
-    const result = await mockGetChallenge(challengeId);
-    if (result.success && result.challenge) {
-      initialDataPayload = { challenge: result.challenge as ChallengeType };
-    } else {
-      if (result.error && result.error.toLowerCase().includes('not found')) {
-        notFound();
-      }
-      initialDataPayload = { error: result.error || "Failed to load challenge from server." };
-    }
-  } catch (err: any) {
-    console.error("Server-side error fetching challenge:", err);
-    initialDataPayload = { error: "An unexpected server error occurred." };
-  }
-  
-  return <ChallengeInteractiveContent initialChallengeData={initialDataPayload} challengeId={challengeId} />;
-}
-

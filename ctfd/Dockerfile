@@ -3,6 +3,9 @@
 # More info: https://learn.microsoft.com/en-gb/azure/postgresql/flexible-server/concepts-networking-ssl-tls#downloading-root-ca-certificates-and-updating-application-clients-in-certificate-pinning-scenarios
 FROM ctfd/ctfd:3.7.7
 
+RUN rm -rf /opt/CTFd
+COPY ./ctfd /opt/CTFd
+
 USER root
 RUN apt-get update && apt-get install -y wget --no-install-recommends \
     && apt-get clean \

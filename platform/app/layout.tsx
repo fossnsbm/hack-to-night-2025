@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
+
+import "./globals.css";
+import { Silkscreen } from "next/font/google";
+
 import BackgroundCanvas from "@/components/common/BackgroundCanvas";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import { ContestProvider } from "@/components/contexts/ContestContext";
-import { TeamProvider } from "@/components/contexts/TeamContext";
-import type { Metadata } from "next";
-import { Silkscreen } from "next/font/google";
-import "./globals.css";
+import { AuthProvider } from "@/components/contexts/AuthContext";
 
 const silkscreen = Silkscreen({
   subsets: ["latin"],
@@ -26,9 +28,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${silkscreen.className} antialiased`}>
-        <TeamProvider>
+        <AuthProvider>
           <ContestProvider>
-            <BackgroundCanvas />
             <main className="fixed top-0 left-0 w-dvw h-dvh z-10 flex flex-col">
               <div id="page" className="snap-y snap-mandatory overflow-y-auto font-sans scroll-smooth">
                 <Header />
@@ -36,8 +37,9 @@ export default function RootLayout({
                 <Footer />
               </div>
             </main>
+            <BackgroundCanvas />
           </ContestProvider>
-        </TeamProvider>
+        </AuthProvider>
       </body>
     </html>
   );

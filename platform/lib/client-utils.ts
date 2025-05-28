@@ -1,62 +1,10 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-type ApiRequest = {
-    path: string;
-    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-    params?: Record<string, string>;
-    body?: Record<string, any>;
-};
-
-export async function api({ path, method, params, body }: ApiRequest): Promise<Record<string, any> | null> {
-    const init: RequestInit = {
-        method: method ?? "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.CTFD_TOKEN}`
-        },
-    }
-
-    const url = new URL(path, process.env.CTFD_URL)
-
-    if (params) {
-        for (const param in params) {
-            url.searchParams.set(param, params[param])
-        }
-    }
-
-    if (body) {
-        init.body = JSON.stringify(body)
-    }
-
-    try {
-        const res = await fetch(url, init);
-        const json = await res.json()
-
-        if (json.success) {
-            return json
-        }
-    } catch (e) {
-        console.error("error while fetching", url, e);
-    }
-
-    return null
-}
-
-/**
- * A utility function for conditionally joining class names together
- * Combines clsx for conditional classes and tailwind-merge to handle Tailwind CSS class conflicts
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/**
- * Button variant styling
- * 
- * @param variant - The button style variant
- * @returns Tailwind classes for the button
- */
 export const getButtonClasses = (
   variant: 'primary' | 'secondary' | 'danger' | 'success' | 'outline' | 'light' = 'primary',
   size: 'sm' | 'md' | 'lg' = 'md',
@@ -85,12 +33,6 @@ export const getButtonClasses = (
   return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${widthClass}`;
 };
 
-/**
- * Input field styling
- * 
- * @param variant - The input style variant
- * @returns Tailwind classes for input fields
- */
 export const getInputClasses = (
   variant: 'default' | 'dark' | 'bordered' = 'default',
   hasError: boolean = false
@@ -109,11 +51,6 @@ export const getInputClasses = (
   return `${baseClasses} ${variantClasses[variant]} ${errorClasses}`;
 };
 
-/**
- * Form group wrapper styling
- * 
- * @returns Tailwind classes for form groups
- */
 export const getFormGroupClasses = (
   marginBottom: 'sm' | 'md' | 'lg' = 'md',
 ) => {
@@ -126,11 +63,6 @@ export const getFormGroupClasses = (
   return marginClasses[marginBottom];
 };
 
-/**
- * Form label styling
- * 
- * @returns Tailwind classes for form labels
- */
 export const getLabelClasses = (
   size: 'sm' | 'md' = 'md',
 ) => {
@@ -144,12 +76,6 @@ export const getLabelClasses = (
   return `${baseClasses} ${sizeClasses[size]}`;
 };
 
-/**
- * Card container styling
- * 
- * @param variant - The card style variant
- * @returns Tailwind classes for card containers
- */
 export const getCardClasses = (
   variant: 'default' | 'dark' | 'gradient' = 'default',
   padding: 'sm' | 'md' | 'lg' = 'md',
@@ -171,12 +97,6 @@ export const getCardClasses = (
   return `${baseClasses} ${paddingClasses[padding]} ${variantClasses[variant]}`;
 };
 
-/**
- * Alert/notification styling
- * 
- * @param type - The alert type
- * @returns Tailwind classes for alerts
- */
 export const getAlertClasses = (
   type: 'info' | 'success' | 'warning' | 'error' = 'info',
 ) => {
