@@ -22,7 +22,7 @@ export enum ContestState {
 }
 
 export const REGISTRATION_START_DATE = new Date("2025-05-19T00:00:00+05:30");
-export const CONTEST_START_DATE = new Date("2025-05-29T22:00:00+05:30");
+export const CONTEST_START_DATE = new Date("2025-05-30T22:00:00+05:30");
 export const CONTEST_DURATION_HOURS = 8;
 
 
