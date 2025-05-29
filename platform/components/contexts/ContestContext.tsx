@@ -48,6 +48,9 @@ export function ContestProvider({ children }: ContestProviderProps) {
     const updateContestState = () => {
       const now = new Date();
       const endDate = new Date(CONTEST_START_DATE.getTime() + (CONTEST_DURATION_HOURS * 60 * 60 * 1000));
+
+      setContestState(ContestState.NOT_STARTED);
+      return;
       
       if (now >= CONTEST_START_DATE && now < endDate) {
         
