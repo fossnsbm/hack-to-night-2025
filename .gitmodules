@@ -1,0 +1,3 @@
+[submodule "challenges"]
+	path = challenges
+	url = git@github.com:fossnsbm/hack-to-night-2025-challenges.git
