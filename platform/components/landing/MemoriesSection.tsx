@@ -32,7 +32,7 @@ export default function MemoriesSection() {
                         <Image className="rounded-full object-cover" src="/memory-1.jpg" alt="Memory Image 1" fill />
                     </div>
                     <div className="size-[50dvw] absolute top-0 right-0 rounded-full overflow-hidden z-10 scale-90 origin-top-right border-white border-2">
-                        <Image className="rounded-full object-cover" src="/memory-2.jpg" alt="Memory Image 2" fill />
+                        <a href="https://docs.google.com/presentation/d/1mNqXg69kxskhuLVb61Hd1YSS5qV6y0c0BPeH36k_ovc/edit?usp=sharing"><Image className="rounded-full object-cover" src="/memory-2.jpg" alt="Memory Image 2" fill /></a>
                     </div>
                     <div className="size-[50dvw] absolute top-1/2 left-1/2 -translate-1/2 rounded-full overflow-hidden z-20 border-white border-2">
                         <Image className="rounded-full object-cover" src="/memory-3.jpg" alt="Memory Image 3" fill />
