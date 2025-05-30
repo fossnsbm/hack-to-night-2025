@@ -54,23 +54,23 @@ services:
       - redis
       - registry
 
-  nextjs:
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - ./platform:/app
-    command: |
-      sh -c "
-        corepack enable &&
-        corepack prepare pnpm@latest --activate &&
-        pnpm install &&
-        pnpm run build &&
-        pnpm run start
-      "
-    ports:
-      - "3000:3000"
-    depends_on:
-      - ctfd
+  # nextjs:
+  #   image: node:18-alpine
+  #   working_dir: /app
+  #   volumes:
+  #     - ./platform:/app
+  #   command: |
+  #     sh -c "
+  #       corepack enable &&
+  #       corepack prepare pnpm@latest --activate &&
+  #       pnpm install &&
+  #       pnpm run build &&
+  #       pnpm run start
+  #     "
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - ctfd
 
 volumes:
   mysql-data: {}
