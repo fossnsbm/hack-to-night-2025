@@ -14,7 +14,7 @@ export default function Title({ title }: Props) {
             }}
         >
             <h2 className="text-2xl md:text-3xl text-center mb-4">
-                { title }
+                {title}
             </h2>
         </motion.div>
     )

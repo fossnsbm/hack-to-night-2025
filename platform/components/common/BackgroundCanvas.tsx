@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 const is_mobile = "navigator" in globalThis ? /Mobi/i.test(navigator.userAgent) : false;
@@ -130,10 +130,10 @@ function update(delta: number, timestamp: number) {
 
     if (isLandingPage) {
         const moon_pos: Vec2 = {
-            x: (1 - (MOON_SIZE * 2/3)),
-            y: (1 - ((MOON_SIZE * (canvas.width / canvas.height)) * 2/3))
+            x: (1 - (MOON_SIZE * 2 / 3)),
+            y: (1 - ((MOON_SIZE * (canvas.width / canvas.height)) * 2 / 3))
         };
-        
+
         const moon_scroll_goal: Vec2 = {
             x: 1 + MOON_SIZE,
             y: 2 + MOON_SIZE
@@ -141,19 +141,19 @@ function update(delta: number, timestamp: number) {
 
         moon.offset.x = (moon_scroll_goal.x - moon_pos.x) * (scroll_top_rt);
         moon.offset.y = (moon_scroll_goal.y - moon_pos.y) * (scroll_top_rt);
-        
+
         moon.pos.x = moon_pos.x + moon.offset.x;
         moon.pos.y = moon_pos.y + moon.offset.y;
-        
-        const astro_src_dims = imgDims("astronaut.png");
+
+        const astro_src_dims = imgDims("/astronaut.png");
         const astro_dims: Vec2 = {
             x: ASTRO_WIDTH,
             y: ((ASTRO_WIDTH * canvas.width) / (astro_src_dims.x / astro_src_dims.y)) / canvas.height
         };
 
         const astro_pos: Vec2 = {
-            x: (1 - (1 - moon.pos.x) - (astro_dims.x * 2/3)),
-            y: (1 - (1 - moon.pos.y) - (astro_dims.y * 2/3))
+            x: (1 - (1 - moon.pos.x) - (astro_dims.x * 2 / 3)),
+            y: (1 - (1 - moon.pos.y) - (astro_dims.y * 2 / 3))
         };
 
         if (Math.random() < 0.001) {
@@ -163,7 +163,7 @@ function update(delta: number, timestamp: number) {
         if (Math.random() < 0.001) {
             astro.float_dir.y *= -1
         }
-        
+
         astro.float_offset.x += astro.float_dir.x * ASTRO_FLOAT_SPEED * delta * 0.0005;
         astro.float_offset.y += astro.float_dir.y * ASTRO_FLOAT_SPEED * delta * 0.0005;
 
@@ -178,11 +178,11 @@ function update(delta: number, timestamp: number) {
 
         astro.offset.x = astro.scroll_offset.x + astro.float_offset.x;
         astro.offset.y = astro.scroll_offset.y + astro.float_offset.y;
-        
+
         astro.pos.x = astro_pos.x + astro.offset.x;
         astro.pos.y = astro_pos.y + astro.offset.y;
 
-        const spaceship_src_dims = imgDims("spaceship.png");
+        const spaceship_src_dims = imgDims("/spaceship.png");
         const spaceship_dims: Vec2 = {
             x: SPACESHIP_WIDTH,
             y: ((SPACESHIP_WIDTH * canvas.width) / (spaceship_src_dims.x / spaceship_src_dims.y)) / canvas.height
@@ -207,7 +207,7 @@ function update(delta: number, timestamp: number) {
         if (spaceship.float_offset_y >= 0.025 || spaceship.float_offset_y <= 0) {
             spaceship.float_dir_y *= -1
         }
-        
+
         const ss_float_delta = spaceship.float_dir_y * SPACESHIP_FLOAT_SPEED * delta * 0.0005;
         spaceship.float_offset_y += ss_float_delta;
         spaceship.float_offset_y = Math.min(Math.max(spaceship.float_offset_y, 0), 0.025);
@@ -230,27 +230,27 @@ function render() {
         ctx.globalAlpha = 1.0;
 
         ctx.drawImage(
-            imageMap.get("moon.png")!,
+            imageMap.get("/moon.png")!,
             moon.pos.x * canvas.width,
             moon.pos.y * canvas.height,
             MOON_SIZE * canvas.width,
             MOON_SIZE * canvas.width,
         );
 
-        const astro_dims = imgDims("astronaut.png");
-        
+        const astro_dims = imgDims("/astronaut.png");
+
         ctx.drawImage(
-            imageMap.get("astronaut.png")!,
+            imageMap.get("/astronaut.png")!,
             astro.pos.x * canvas.width,
             astro.pos.y * canvas.height,
             ASTRO_WIDTH * canvas.width,
             (ASTRO_WIDTH * canvas.width) / (astro_dims.x / astro_dims.y),
         );
-        
-        const spaceship_dims = imgDims("spaceship.png");
+
+        const spaceship_dims = imgDims("/spaceship.png");
 
         ctx.drawImage(
-            imageMap.get("spaceship.png")!,
+            imageMap.get("/spaceship.png")!,
             spaceship.pos.x * canvas.width,
             spaceship.pos.y * canvas.height,
             SPACESHIP_WIDTH * canvas.width,
@@ -274,18 +274,18 @@ async function init() {
     canvas = document.getElementById("bg")! as HTMLCanvasElement;
     ctx = canvas.getContext("2d")!;
 
-    await imgAdd("moon.png");
-    await imgAdd("astronaut.png");
-    await imgAdd("spaceship.png");
+    await imgAdd("/moon.png");
+    await imgAdd("/astronaut.png");
+    await imgAdd("/spaceship.png");
 
     stars.stars = [];
     for (let i = 0; i < STAR_NUM; i++) {
         stars.stars.push({
             pos: { x: Math.random(), y: Math.random() },
-            last_shined: Math.random() * STAR_SHINE_DUR, 
+            last_shined: Math.random() * STAR_SHINE_DUR,
             shining_time: (STAR_SHINE_DUR * 0.2) + (Math.random() * (STAR_SHINE_DUR * 0.8)),
             float_speed_factor: (STAR_FLOAT_SPEED * 0.60) + (Math.random() * (STAR_FLOAT_SPEED * 0.40)),
-            shining_factor: Math.random() 
+            shining_factor: Math.random()
         });
     }
 

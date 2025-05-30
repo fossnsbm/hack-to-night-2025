@@ -18,7 +18,6 @@ function Countdown() {
     useEffect(() => {
         const updateCountdown = () => {
             const diff = CONTEST_START_DATE.getTime() - Date.now();
-            
             const remainingTime = Math.max(0, diff);
             
             days.current!.textContent = ((remainingTime / DAY) >> 0).toString().padStart(2, "0");
