@@ -2,9 +2,19 @@
 
 import { api } from "@/lib/ctfd";
 import { verifyToken } from "@/lib/server-utils";
-import { Challenge, ChallengeExtended, Member, Team } from "@/lib/types";
+import { validateContestState, ContestState } from "@/lib/contest-utils";
+import { Challenge, ChallengeExtended, Member, Team, DockerContainer, DockerStatus } from "@/lib/types";
 
 export async function getTeamAndMember(token: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Team information is not available at this time" 
+        };
+    }
+
     const res = await verifyToken(token);
     if (res) {
         const { tid, uid } = res;
@@ -59,6 +69,15 @@ export async function getTeamAndMember(token: string) {
 }
 
 export async function getTeamChallenges(token: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Challenges are not available at this time" 
+        };
+    }
+
     const res = await verifyToken(token);
     if (res) {
         const {tid} = res;
@@ -92,7 +111,8 @@ export async function getTeamChallenges(token: string) {
                 category: challenge.category,
                 solved: solvesRes.data.find((s: any) => s.challenge_id === challenge.id) != null,
                 solves: challenge.solves,
-                points: challenge.value
+                points: challenge.value,
+                type: challenge.type
             });
         }
 
@@ -103,6 +123,15 @@ export async function getTeamChallenges(token: string) {
 }
 
 export async function getChallengeExtended(token: string, id: number) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Challenge details are not available at this time" 
+        };
+    }
+
     const res = await verifyToken(token);
     if (res) {
         const {tid} = res;
@@ -133,9 +162,10 @@ export async function getChallengeExtended(token: string, id: number) {
                 solved: solvesRes.data.find((s: any) => s.challenge_id === challengeRes.data.id) != null,
                 solves: challengeRes.data.solves,
                 points: challengeRes.data.value,
+                type: challengeRes.data.type,
                 description: challengeRes.data.description,
-                connection_info: challengeRes.data.connection_info,
                 files: challengeRes.data.files,
+                docker_image: challengeRes.data.docker_image,
             } as ChallengeExtended
         }
     }
@@ -144,6 +174,15 @@ export async function getChallengeExtended(token: string, id: number) {
 }
 
 export async function submitFlag(token: string, cid: number, flag: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Flag submission is not available at this time" 
+        };
+    }
+
     const res = await verifyToken(token);
     if (res) {
         const attemptRes = await api({
@@ -194,6 +233,15 @@ export async function submitFlag(token: string, cid: number, flag: string) {
 }
 
 export async function getLeaderboardTeams(token: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Leaderboard is not available at this time" 
+        };
+    }
+
     const res = await verifyToken(token);
     if (res) {
         const sbRes = await api({
@@ -215,4 +263,111 @@ export async function getLeaderboardTeams(token: string) {
     }
 
     return { success: false, error: "invalid token" }
+}
+
+export async function getDockerStatus(token: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Docker containers are not available at this time" 
+        };
+    }
+
+    const res = await verifyToken(token);
+    if (res) {
+        const dockerRes = await api({
+            path: `/docker_status`,
+        });
+
+        if (dockerRes == null || !dockerRes.success) {
+            console.error(dockerRes);
+            return { success: false, error: "Failed to get Docker status" };
+        }
+
+        return { 
+            success: true, 
+            containers: dockerRes.data as DockerContainer[] 
+        };
+    }
+
+    return { success: false, error: "invalid token" };
+}
+
+export async function startDockerContainer(token: string, challengeId: number, dockerImage: string, challengeName: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Docker containers are not available at this time" 
+        };
+    }
+
+    const res = await verifyToken(token);
+    if (res) {
+        try {
+            const containerRes = await api({
+                path: `/container`,
+                params: {
+                    name: dockerImage,
+                    challenge: challengeName
+                }
+            });
+
+            if (containerRes == null || !containerRes.success) {
+                // Check if it's a 403 error (container already running or other restriction)
+                if (containerRes?.status === 403) {
+                    return { success: false, error: containerRes.message || "Container operation not allowed" };
+                }
+                console.error(containerRes);
+                return { success: false, error: "Failed to start Docker container" };
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error starting Docker container:", error);
+            return { success: false, error: "Failed to start Docker container" };
+        }
+    }
+
+    return { success: false, error: "invalid token" };
+}
+
+export async function stopDockerContainer(token: string, challengeId: number, dockerImage: string, challengeName: string) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Docker containers are not available at this time" 
+        };
+    }
+
+    const res = await verifyToken(token);
+    if (res) {
+        try {
+            const containerRes = await api({
+                path: `/container`,
+                params: {
+                    name: dockerImage,
+                    challenge: challengeName,
+                    stopcontainer: "true"
+                }
+            });
+
+            if (containerRes == null || !containerRes.success) {
+                console.error(containerRes);
+                return { success: false, error: "Failed to stop Docker container" };
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error stopping Docker container:", error);
+            return { success: false, error: "Failed to stop Docker container" };
+        }
+    }
+
+    return { success: false, error: "invalid token" };
 }

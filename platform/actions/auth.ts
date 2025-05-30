@@ -2,6 +2,7 @@
 
 import { api, apiQuery } from "@/lib/ctfd";
 import { hashPassword, createToken, verifyPassword, verifyToken } from "@/lib/server-utils";
+import { validateContestState, ContestState } from "@/lib/contest-utils";
 
 import { UpdateTeamDto } from "@/lib/types";
 import { isValidEmail } from "@/lib/common-utils";
@@ -12,6 +13,14 @@ type LoginTeamInput = {
 };
 
 export async function login(data: LoginTeamInput) {
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Login is not available at this time" 
+        };
+    }
+
     if (!(
         data.email &&
         typeof data.email === "string" &&
@@ -69,6 +78,15 @@ type RegisterTeamInput = {
 
 export async function register(data: RegisterTeamInput) {
   try {
+    // Validate that registration is open
+    const contestValidation = validateContestState([ContestState.REGISTRATION]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Registration is not available at this time" 
+        };
+    }
+
     if (!data.contactNo || data.contactNo.trim() === '') {
       return { success: false, error: "Team contact number is required" };
     }
@@ -187,6 +205,15 @@ export async function register(data: RegisterTeamInput) {
 }
 
 export async function updateTeam(token: string, data: UpdateTeamDto) {
+    // Validate that contest has started
+    const contestValidation = validateContestState([ContestState.STARTED]);
+    if (!contestValidation.isValid) {
+        return { 
+            success: false, 
+            error: contestValidation.message || "Team updates are not available at this time" 
+        };
+    }
+
     const res = await verifyToken(token);
     if (res) {
         const { tid, uid } = res;

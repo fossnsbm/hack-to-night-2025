@@ -6,8 +6,8 @@ import { useParams, useRouter } from 'next/navigation';
 import LoadingSection from '@/components/common/LoadingSection';
 import { useAuth } from "@/components/contexts/AuthContext";
 import { getButtonClasses, getInputClasses, getCardClasses, getAlertClasses } from "@/lib/client-utils";
-import { getChallengeExtended, submitFlag } from '@/actions/team';
-import { ChallengeExtended } from '@/lib/types';
+import { getChallengeExtended, submitFlag, getDockerStatus, startDockerContainer, stopDockerContainer } from '@/actions/team';
+import { ChallengeExtended, DockerContainer } from '@/lib/types';
 
 export default function ChallengePage() {
     const router = useRouter();
@@ -24,6 +24,11 @@ export default function ChallengePage() {
         status: "success" | "error";
         message: string;
     } | null>(null);
+    
+    // Docker-related state
+    const [dockerContainers, setDockerContainers] = useState<DockerContainer[]>([]);
+    const [dockerLoading, setDockerLoading] = useState(false);
+    const [dockerError, setDockerError] = useState<string | null>(null);
 
     async function fetchChallenge() {
         if (token) {
@@ -39,9 +44,97 @@ export default function ChallengePage() {
         }
     }
 
+    async function fetchDockerStatus() {
+        if (token && challenge?.type === "docker") {
+            setDockerLoading(true);
+            setDockerError(null);
+            try {
+                const res = await getDockerStatus(token);
+                if (res.success) {
+                    // Filter containers for this specific challenge
+                    const relevantContainers = res.containers?.filter(container => 
+                        container.challenge === challenge.title || 
+                        container.docker_image.includes(challenge.title.toLowerCase())
+                    ) || [];
+                    setDockerContainers(relevantContainers);
+                } else {
+                    setDockerError(res.error || "Failed to get Docker status");
+                    setDockerContainers([]);
+                }
+            } catch (error: any) {
+                setDockerError(error.message || "Failed to get Docker status");
+                setDockerContainers([]);
+            } finally {
+                setDockerLoading(false);
+            }
+        }
+    }
+
+    async function handleStartContainer() {
+        if (!token || !challenge) return;
+        
+        setDockerLoading(true);
+        setDockerError(null);
+        try {
+            // Use the actual Docker image from CTFd challenge data
+            if (!challenge.docker_image) {
+                setDockerError("No Docker image configured for this challenge");
+                return;
+            }
+            
+            const res = await startDockerContainer(token, challenge.id, challenge.docker_image, challenge.title);
+            
+            if (res.success) {
+                // Refresh Docker status after starting
+                setTimeout(() => fetchDockerStatus(), 2000);
+            } else {
+                setDockerError(res.error || "Failed to start container");
+            }
+        } catch (error: any) {
+            setDockerError(error.message || "Failed to start container");
+        } finally {
+            setDockerLoading(false);
+        }
+    }
+
+    async function handleStopContainer() {
+        if (!token || !challenge) return;
+        
+        setDockerLoading(true);
+        setDockerError(null);
+        try {
+            if (!challenge.docker_image) {
+                setDockerError("No Docker image configured for this challenge");
+                return;
+            }
+            
+            const res = await stopDockerContainer(token, challenge.id, challenge.docker_image, challenge.title);
+            
+            if (res.success) {
+                // Refresh Docker status after stopping
+                setTimeout(() => fetchDockerStatus(), 1000);
+            } else {
+                setDockerError(res.error || "Failed to stop container");
+            }
+        } catch (error: any) {
+            setDockerError(error.message || "Failed to stop container");
+        } finally {
+            setDockerLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchChallenge()
     }, [team]);
+
+    useEffect(() => {
+        if (challenge?.type === "docker") {
+            fetchDockerStatus();
+            // Poll Docker status every 30 seconds
+            const interval = setInterval(fetchDockerStatus, 30000);
+            return () => clearInterval(interval);
+        }
+    }, [challenge, token]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -122,18 +215,6 @@ export default function ChallengePage() {
                         <p className="text-gray-300 whitespace-pre-line">{challenge?.description}</p>
                     </div>
 
-                    {challenge?.connection_info && (
-                        <div className="mt-6 p-4 bg-gray-900/50 border border-blue-700/30 rounded-md">
-                            <div className="flex items-center text-blue-500 mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                                    <path d="M12 5v14M5 12h14" />
-                                </svg>
-                                <span className="font-medium">Connection Info</span>
-                            </div>
-                            <p className="text-gray-400">{challenge?.connection_info}</p>
-                        </div>
-                    )}
-
                     {challenge?.files && challenge?.files.length > 0 && (
                         <div className="mt-6 p-4 bg-gray-900/50 border border-purple-700/30 rounded-md">
                             <div className="flex items-center text-purple-500 mb-2">
@@ -194,6 +275,99 @@ export default function ChallengePage() {
                         </div>
                     )}
                 </div>
+
+                {/* Docker Container Management */}
+                {challenge?.type === "docker" && (
+                    <div className={getCardClasses('default', 'lg') + ' mb-8'}>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center text-cyan-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                                    <path d="M20 7h-3a2 2 0 0 1-2-2V2M9 18v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3"/>
+                                    <path d="M3 7.5L7.5 3H14l4 4v4"/>
+                                    <path d="M7 13h6"/>
+                                    <path d="M7 17h4"/>
+                                </svg>
+                                <span className="font-medium">Docker Container</span>
+                            </div>
+                            <button
+                                onClick={fetchDockerStatus}
+                                className={getButtonClasses('secondary', 'sm')}
+                                disabled={dockerLoading}
+                            >
+                                <span className="flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                                    </svg>
+                                    <span>Refresh</span>
+                                </span>
+                            </button>
+                        </div>
+
+                        {dockerError && (
+                            <div className={`mb-4 ${getAlertClasses("error")}`}>
+                                {dockerError}
+                            </div>
+                        )}
+
+                        {dockerContainers.length > 0 ? (
+                            <div className="space-y-4">
+                                {dockerContainers.map((container) => (
+                                    <div key={container.id} className="p-4 bg-gray-900/50 border border-cyan-700/30 rounded-md">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                                <span className="text-green-400 font-medium">Container Running</span>
+                                            </div>
+                                            <button
+                                                onClick={handleStopContainer}
+                                                className={getButtonClasses('danger', 'sm')}
+                                                disabled={dockerLoading}
+                                            >
+                                                {dockerLoading ? "Stopping..." : "Stop Container"}
+                                            </button>
+                                        </div>
+                                        
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Host:</span>
+                                                <span className="text-white font-mono">{container.host}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Ports:</span>
+                                                <span className="text-white font-mono">{container.ports.join(", ")}</span>
+                                            </div>
+                                            {container.ports.length > 0 && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-400">Connection:</span>
+                                                    <span className="text-cyan-400 font-mono">
+                                                        http://{container.host}:{container.ports[0]}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Auto-stop in:</span>
+                                                <span className="text-yellow-400">
+                                                    {Math.max(0, Math.floor((container.revert_time - Date.now() / 1000) / 60))} minutes
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-6">
+                                <div className="text-gray-400 mb-4">No Docker container is currently running for this challenge.</div>
+                                <button
+                                    onClick={handleStartContainer}
+                                    className={getButtonClasses('primary', 'lg')}
+                                    disabled={dockerLoading || !team}
+                                >
+                                    {dockerLoading ? "Starting..." : "Start Docker Container"}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {!challenge?.solved ? (
                     <div className={getCardClasses('default', 'lg') + ' mb-6'}>

@@ -6,14 +6,14 @@ import { AnimatePresence } from 'motion/react';
 import Section from '@/components/common/Section';
 import RegistrationSuccessModal from '@/components/landing/RegistrationSuccessModal';
 import LoginSuccessModal from '@/components/landing/LoginSuccessModal';
-import { useIsContestStarted, useIsContestNotStarted } from '@/components/contexts/ContestContext';
+import { useIsContestStarted, useIsRegistrationDisabled } from '@/components/contexts/ContestContext';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { login, register } from '@/actions/auth';
 import { getButtonClasses, getInputClasses, getFormGroupClasses, getLabelClasses } from '@/lib/client-utils';
 
 export default function AuthSection() {
     const isStarted = useIsContestStarted();
-    const isNotStarted = useIsContestNotStarted();
+    const isRegistrationDisabled = useIsRegistrationDisabled();
 
     return (
         <Section id="auth">
@@ -25,7 +25,7 @@ export default function AuthSection() {
                 {isStarted ? (
                     <LoginForm />
                 ) : (
-                    <RegistrationForm disabled={isNotStarted} />
+                    <RegistrationForm disabled={isRegistrationDisabled} />
                 )}
             </div>
         </Section>

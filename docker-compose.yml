@@ -22,26 +22,38 @@ services:
     ports:
       - "6379:6379"
 
+  registry:
+    image: registry:2
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - registry-data:/var/lib/registry
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+
   ctfd:
     build:
       context: ./ctfd
     restart: unless-stopped
+    user: "0:967"
     env_file:
       - .env
     environment:
       DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
       DOCKER_CHALLENGES_ENABLED: "true"
-      DOCKER_API_HOST: unix:///var/run/docker.sock
-      DOCKER_REGISTRY_SERVER_URL: "localhost:5000"
     volumes:
       - ./ctfd/uploads:/opt/CTFd/CTFd/uploads
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8000:8000"
     depends_on:
       - mysql
       - redis
+      - registry
 
   nextjs:
     image: node:18-alpine
@@ -62,4 +74,5 @@ services:
       - ctfd
 
 volumes:
-  mysql-data: {} 
+  mysql-data: {}
+  registry-data: {} 

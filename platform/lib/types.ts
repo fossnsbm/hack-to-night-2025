@@ -20,16 +20,35 @@ export type Challenge = {
     solved: boolean;
     solves: number;
     points: number;
+    type?: string;
 };
 
 export type ChallengeExtended = Challenge & {
     description: string;
-    connection_info: string | null;
     files: string[];
+    docker_image?: string;
 }
 
 export type UpdateTeamDto = {
     name?: string;
     currentPassword?: string;
     newPassword?: string;
+}
+
+export type DockerContainer = {
+    id: number;
+    team_id: string | null;
+    user_id: string | null;
+    docker_image: string;
+    timestamp: number;
+    revert_time: number;
+    instance_id: string;
+    ports: string[];
+    host: string;
+    challenge?: string;
+}
+
+export type DockerStatus = {
+    success: boolean;
+    data: DockerContainer[];
 }
