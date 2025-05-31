@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { getLeaderboardTeams } from '@/actions/team';
 import LoadingSection from '@/components/common/LoadingSection';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { Team } from '@/lib/types';
-import { getLeaderboardTeams } from '@/actions/team';
 
 function LeaderboardContent() {
     const { token, team } = useAuth();
@@ -73,7 +73,7 @@ function LeaderboardContent() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-800/50">
-                                    {/*teams!.map((team, index) => (
+                                    {teams!.map((team, index) => (
                                         <tr key={team.id} className="hover:bg-gray-800/50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
@@ -94,228 +94,7 @@ function LeaderboardContent() {
                                                 {team.score} pts
                                             </td>
                                         </tr>
-                                    ))*/}
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-yellow-500 text-black`}>
-                                                    1
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">BloodHound</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1790 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-300 text-black`}>
-                                                    2
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">CipherTech</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1440 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-amber-700 text-white`}>
-                                                    3
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">Cybernauts</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1440 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    4
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">kontroll</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1440 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    5
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">L0gX5</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1380 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    6
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">Team_phoenix</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1210 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    7
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">Binary Blitz</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            1160 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    8
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">Quadcore</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            880 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    9
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">cipher</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            790 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    10
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">Raptors</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            670 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    11
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">innovatex</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            600 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    12
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">kernEl crew</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            440 pts
-                                        </td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className={`
-                          flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                          bg-gray-700 text-white`}>
-                                                    13
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium">Cyber Warriors</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-cyan-400 font-bold">
-                                            420 pts
-                                        </td>
-                                    </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>

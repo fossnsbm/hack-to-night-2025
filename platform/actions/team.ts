@@ -1,9 +1,9 @@
 "use server";
 
+import { ContestState, validateContestState } from "@/lib/contest-utils";
 import { api } from "@/lib/ctfd";
 import { verifyToken } from "@/lib/server-utils";
-import { validateContestState, ContestState } from "@/lib/contest-utils";
-import { Challenge, ChallengeExtended, Member, Team, DockerContainer, DockerStatus } from "@/lib/types";
+import { Challenge, ChallengeExtended, DockerContainer, Member, Team } from "@/lib/types";
 
 export async function getTeamAndMember(token: string) {
     // Validate that contest has started
@@ -233,15 +233,6 @@ export async function submitFlag(token: string, cid: number, flag: string) {
 }
 
 export async function getLeaderboardTeams(token: string) {
-    // Validate that contest has started
-    const contestValidation = validateContestState([ContestState.STARTED]);
-    if (!contestValidation.isValid) {
-        return { 
-            success: false, 
-            error: contestValidation.message || "Leaderboard is not available at this time" 
-        };
-    }
-
     const res = await verifyToken(token);
     if (res) {
         const sbRes = await api({
