@@ -32,7 +32,7 @@ function LeaderboardContent() {
             {teams != null && (
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-3xl md:text-4xl font-bold text-cyan-400">Leaderboard (FREEZED)</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold text-cyan-400">Leaderboard</h1>
                         {/*<button
                             className="px-4 py-2 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500 rounded text-white text-sm transition-colors flex items-center gap-2 cursor-not-allowed opacity-50"
                             onClick={fetchTeams}
