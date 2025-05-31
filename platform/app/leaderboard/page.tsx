@@ -4,12 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getLeaderboardTeams } from '@/actions/team';
 import LoadingSection from '@/components/common/LoadingSection';
-import { useAuth } from '@/components/contexts/AuthContext';
 import { Team } from '@/lib/types';
 
 function LeaderboardContent() {
-    const { token, team } = useAuth();
-
     const [teams, setTeams] = useState<Team[] | null>(null);
 
     const totalPointsAwarded = useMemo(() => {
@@ -17,22 +14,18 @@ function LeaderboardContent() {
     }, [teams]);
 
     async function fetchTeams() {
-        if (token) {
-            const res = await getLeaderboardTeams(token)
-            if (res.success) {
-                setTeams(res.teams!)
-            } else {
-                alert(res.error)
-                setTeams(null)
-            }
+        const res = await getLeaderboardTeams()
+        if (res.success) {
+            setTeams(res.teams!)
         } else {
+            alert(res.error)
             setTeams(null)
         }
     }
 
     useEffect(() => {
         fetchTeams()
-    }, [team]);
+    }, []);
 
     return (
         <LoadingSection id="leaderboard" loading={teams == null}>

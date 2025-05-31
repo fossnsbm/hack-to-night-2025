@@ -232,7 +232,8 @@ export async function submitFlag(token: string, cid: number, flag: string) {
     return { success: false, error: "invalid token" }
 }
 
-export async function getLeaderboardTeams(token: string) {
+export async function getLeaderboardTeams() {
+    console.log("hit")
     const sbRes = await api({
         path: `/scoreboard`,
     });
