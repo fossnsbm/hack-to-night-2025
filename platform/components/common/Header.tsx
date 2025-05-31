@@ -1,13 +1,13 @@
 "use client";
 
-import * as motion from "motion/react-client";
-import { useState } from 'react';
-import { usePathname } from 'next/navigation';
 import { AnimatePresence } from 'motion/react';
+import * as motion from "motion/react-client";
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 import TeamInfoModal from '@/components/common/TeamInfoModal';
-import { useIsContestStarted } from '@/components/contexts/ContestContext';
 import { useAuth } from '@/components/contexts/AuthContext';
+import { useIsContestStarted } from '@/components/contexts/ContestContext';
 
 function Header() {
     const { team } = useAuth();
@@ -17,11 +17,12 @@ function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-    const navItems: Record<string, string> = {};
+    const navItems: Record<string, string> = {
+        "Leaderboard": "/leaderboard"
+    };
 
     if (team != null && isContestStarted) {
         navItems["Challenges"] = "/challenges";
-        navItems["Leaderboard"] = "/leaderboard";
     } else if (pathname === "/") {
         navItems["About Us"] = `/#about`;
         navItems["Memories"] = `/#memories`;
