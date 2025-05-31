@@ -233,27 +233,22 @@ export async function submitFlag(token: string, cid: number, flag: string) {
 }
 
 export async function getLeaderboardTeams(token: string) {
-    const res = await verifyToken(token);
-    if (res) {
-        const sbRes = await api({
-            path: `/scoreboard`,
-        });
+    const sbRes = await api({
+        path: `/scoreboard`,
+    });
 
-        if (sbRes == null || !sbRes.success) {
-            console.error(sbRes)
-            return { success: false, error: "internal server error" }
-        }
-        
-        const teams: Team[] = sbRes.data.map((t: any) => ({
-            id: t.account_id,
-            name: t.name,
-            score: t.score
-        } as Team));
-
-        return { success: true, teams }
+    if (sbRes == null || !sbRes.success) {
+        console.error(sbRes)
+        return { success: false, error: "internal server error" }
     }
+    
+    const teams: Team[] = sbRes.data.map((t: any) => ({
+        id: t.account_id,
+        name: t.name,
+        score: t.score
+    } as Team));
 
-    return { success: false, error: "invalid token" }
+    return { success: true, teams }
 }
 
 export async function getDockerStatus(token: string) {
